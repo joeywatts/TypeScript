@@ -198,8 +198,9 @@ namespace ts {
         AmpersandEqualsToken,
         BarEqualsToken,
         CaretEqualsToken,
-        // Identifiers
+        // Identifiers and PrivateNames
         Identifier,
+        PrivateName,
         // Reserved words
         BreakKeyword,
         CaseKeyword,
@@ -803,9 +804,9 @@ namespace ts {
 
     export type EntityName = Identifier | QualifiedName;
 
-    export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
+    export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateName;
 
-    export type DeclarationName = Identifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+    export type DeclarationName = Identifier | PrivateName | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
 
     export interface Declaration extends Node {
         _declarationBrand: any;
@@ -834,6 +835,13 @@ namespace ts {
         parent: Declaration;
         kind: SyntaxKind.ComputedPropertyName;
         expression: Expression;
+    }
+
+    export interface PrivateName extends PrimaryExpression, Declaration {
+        kind: SyntaxKind.PrivateName;
+        // escaping not strictly necessary
+        // avoids gotchas in transforms and utils
+        escapedText: __String;
     }
 
     /* @internal */
@@ -1277,7 +1285,7 @@ namespace ts {
 
     export interface StringLiteral extends LiteralExpression {
         kind: SyntaxKind.StringLiteral;
-        /* @internal */ textSourceNode?: Identifier | StringLiteralLike | NumericLiteral; // Allows a StringLiteral to get its text from another node (used by transforms).
+        /* @internal */ textSourceNode?: Identifier | PrivateName | StringLiteralLike | NumericLiteral; // Allows a StringLiteral to get its text from another node (used by transforms).
         /** Note: this is only set when synthesizing a node, not during parsing. */
         /* @internal */ singleQuote?: boolean;
     }
@@ -1777,7 +1785,7 @@ namespace ts {
     export interface PropertyAccessExpression extends MemberExpression, NamedDeclaration {
         kind: SyntaxKind.PropertyAccessExpression;
         expression: LeftHandSideExpression;
-        name: Identifier;
+        name: Identifier | PrivateName;
     }
 
     export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
