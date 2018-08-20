@@ -82,6 +82,10 @@ namespace ts {
                     return visitLabeledStatement(node as LabeledStatement);
                 case SyntaxKind.ObjectLiteralExpression:
                     return visitObjectLiteralExpression(node as ObjectLiteralExpression);
+                case SyntaxKind.PrefixUnaryExpression:
+                    return visitPrefixUnaryExpression(node as PrefixUnaryExpression);
+                case SyntaxKind.PostfixUnaryExpression:
+                    return visitPostfixUnaryExpression(node as PostfixUnaryExpression);
                 case SyntaxKind.BinaryExpression:
                     return visitBinaryExpression(node as BinaryExpression, noDestructuringValue);
                 case SyntaxKind.VariableDeclaration:
@@ -507,6 +511,64 @@ namespace ts {
                 }
             }
             return visitEachChild(node, visitor, context);
+        }
+
+        function visitPrefixUnaryExpression(node: PrefixUnaryExpression) {
+            // Transform private name mutating expressions.
+            if ((node.operator === SyntaxKind.PlusPlusToken || node.operator === SyntaxKind.MinusMinusToken) &&
+                isPropertyAccessExpression(node.operand) &&
+                isPrivateName(node.operand.name)) {
+
+                const newValue = (node.operator === SyntaxKind.PlusPlusToken ? createAdd : createSubtract)(
+                    createClassPrivateFieldGetHelper(
+                        context,
+                        node.operand.expression,
+                        accessPrivateName(node.operand.name)
+                    ),
+                    createLiteral(1)
+                );
+                return setOriginalNode(
+                    createClassPrivateFieldSetHelper(
+                        context,
+                        node.operand.expression,
+                        accessPrivateName(node.operand.name),
+                        newValue
+                    ),
+                    node
+                );
+            }
+            return node;
+        }
+        function visitPostfixUnaryExpression(node: PostfixUnaryExpression) {
+            // Transform private name mutating expressions.
+            if ((node.operator === SyntaxKind.PlusPlusToken || node.operator === SyntaxKind.MinusMinusToken) &&
+                isPropertyAccessExpression(node.operand) &&
+                isPrivateName(node.operand.name)) {
+
+                const tempVariable = createTempVariable(/*recordTempVariable*/ undefined);
+                hoistVariableDeclaration(tempVariable);
+                const newValue = (node.operator === SyntaxKind.PlusPlusToken ? createAdd : createSubtract)(
+                    createAssignment(
+                        tempVariable,
+                        createClassPrivateFieldGetHelper(
+                            context,
+                            node.operand.expression,
+                            accessPrivateName(node.operand.name)
+                        )
+                    ),
+                    createLiteral(1)
+                );
+                return setOriginalNode(
+                    createClassPrivateFieldSetHelper(
+                        context,
+                        node.operand.expression,
+                        accessPrivateName(node.operand.name),
+                        createComma(newValue, tempVariable)
+                    ),
+                    node
+                );
+            }
+            return node;
         }
 
         /**
