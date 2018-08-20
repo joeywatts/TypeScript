@@ -120,6 +120,8 @@ namespace ts {
                     return visitClassDeclaration(node as ClassDeclaration);
                 case SyntaxKind.ClassExpression:
                     return visitClassExpression(node as ClassExpression);
+                case SyntaxKind.CallExpression:
+                    return visitCallExpression(node as CallExpression);
                 default:
                     return visitEachChild(node, visitor, context);
             }
@@ -505,6 +507,50 @@ namespace ts {
                         node
                     );
                 }
+            }
+            return visitEachChild(node, visitor, context);
+        }
+
+        function visitCallExpression(node: CallExpression) {
+            if (isPropertyAccessExpression(node.expression) &&
+                isPrivateName(node.expression.name)) {
+
+                return updateCall(
+                    node,
+                    createPropertyAccess(
+                        setOriginalNode(
+                            createClassPrivateFieldGetHelper(
+                                context,
+                                node.expression.expression,
+                                accessPrivateName(node.expression.name)
+                            ),
+                            node.expression
+                        ),
+                        "apply"
+                    ),
+                    node.typeArguments,
+                    [node.expression.expression, ...node.arguments]
+                );
+            }
+            else if (isParenthesizedExpression(node.expression) &&
+                     isPropertyAccessExpression(node.expression.expression) &&
+                     isPrivateName(node.expression.expression.name)) {
+                return updateCall(
+                    node,
+                    createPropertyAccess(
+                        updateParen(
+                            node.expression,
+                            createClassPrivateFieldGetHelper(
+                                context,
+                                node.expression.expression.expression,
+                                accessPrivateName(node.expression.expression.name)
+                            )
+                        ),
+                        "apply"
+                    ),
+                    node.typeArguments,
+                    [node.expression.expression.expression, ...node.arguments]
+                );
             }
             return visitEachChild(node, visitor, context);
         }
