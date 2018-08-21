@@ -1,0 +1,46 @@
+=== tests/cases/conformance/classes/privateNames/propertyUnaryMutation.ts ===
+class A {
+>A : A
+
+    #property: number = 1;
+>#property : number
+>1 : 1
+
+    postfixPlusPlus() {
+>postfixPlusPlus : () => void
+
+        this.#property++;
+>this.#property++ : number
+>this.#property : number
+>this : this
+>#property : number
+    }
+    prefixPlusPlus() {
+>prefixPlusPlus : () => void
+
+        ++this.#property;
+>++this.#property : number
+>this.#property : number
+>this : this
+>#property : number
+    }
+    prefixMinusMinus() {
+>prefixMinusMinus : () => void
+
+        --this.#property;
+>--this.#property : number
+>this.#property : number
+>this : this
+>#property : number
+    }
+    postfixMinusMinus() {
+>postfixMinusMinus : () => void
+
+        this.#property--;
+>this.#property-- : number
+>this.#property : number
+>this : this
+>#property : number
+    }
+}
+
