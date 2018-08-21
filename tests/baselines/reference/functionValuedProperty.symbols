@@ -1,0 +1,45 @@
+=== tests/cases/conformance/classes/members/privateNames/functionValuedProperty.ts ===
+class A {
+>A : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
+
+    #func: (x: string) => number;
+>#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>x : Symbol(x, Decl(functionValuedProperty.ts, 1, 12))
+
+    test() {
+>test : Symbol(A.test, Decl(functionValuedProperty.ts, 1, 33))
+
+        const x = this.#func("hello");
+>x : Symbol(x, Decl(functionValuedProperty.ts, 3, 13))
+>this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
+>#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+
+        this.#func = function (x: string) {
+>this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
+>#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>x : Symbol(x, Decl(functionValuedProperty.ts, 4, 31))
+
+            return parseInt(x);
+>parseInt : Symbol(parseInt, Decl(lib.es5.d.ts, --, --))
+>x : Symbol(x, Decl(functionValuedProperty.ts, 4, 31))
+
+        };
+        const y = (this.#func)("test");
+>y : Symbol(y, Decl(functionValuedProperty.ts, 7, 13))
+>this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
+>#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+
+        (this.#func = function (x: string) {
+>this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
+>#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
+>x : Symbol(x, Decl(functionValuedProperty.ts, 8, 32))
+
+            return 4;
+        })("");
+    }
+}
+

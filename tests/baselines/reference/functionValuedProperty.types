@@ -1,0 +1,60 @@
+=== tests/cases/conformance/classes/members/privateNames/functionValuedProperty.ts ===
+class A {
+>A : A
+
+    #func: (x: string) => number;
+>#func : (x: string) => number
+>x : string
+
+    test() {
+>test : () => void
+
+        const x = this.#func("hello");
+>x : number
+>this.#func("hello") : number
+>this.#func : (x: string) => number
+>this : this
+>#func : (x: string) => number
+>"hello" : "hello"
+
+        this.#func = function (x: string) {
+>this.#func = function (x: string) {            return parseInt(x);        } : (x: string) => number
+>this.#func : (x: string) => number
+>this : this
+>#func : (x: string) => number
+>function (x: string) {            return parseInt(x);        } : (x: string) => number
+>x : string
+
+            return parseInt(x);
+>parseInt(x) : number
+>parseInt : (s: string, radix?: number) => number
+>x : string
+
+        };
+        const y = (this.#func)("test");
+>y : number
+>(this.#func)("test") : number
+>(this.#func) : (x: string) => number
+>this.#func : (x: string) => number
+>this : this
+>#func : (x: string) => number
+>"test" : "test"
+
+        (this.#func = function (x: string) {
+>(this.#func = function (x: string) {            return 4;        })("") : number
+>(this.#func = function (x: string) {            return 4;        }) : (x: string) => number
+>this.#func = function (x: string) {            return 4;        } : (x: string) => number
+>this.#func : (x: string) => number
+>this : this
+>#func : (x: string) => number
+>function (x: string) {            return 4;        } : (x: string) => number
+>x : string
+
+            return 4;
+>4 : 4
+
+        })("");
+>"" : ""
+    }
+}
+
