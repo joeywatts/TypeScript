@@ -559,11 +559,14 @@ namespace ts {
                     createLiteral(1)
                 );
                 return setOriginalNode(
-                    createClassPrivateFieldSetHelper(
-                        context,
-                        node.operand.expression,
-                        accessPrivateName(node.operand.name),
-                        createComma(newValue, tempVariable)
+                    createComma(
+                        createClassPrivateFieldSetHelper(
+                            context,
+                            node.operand.expression,
+                            accessPrivateName(node.operand.name),
+                            newValue
+                        ),
+                        tempVariable
                     ),
                     node
                 );

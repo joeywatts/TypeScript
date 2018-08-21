@@ -25,7 +25,7 @@ var A = /** @class */ (function () {
     }
     A.prototype.postfixPlusPlus = function () {
         var _a;
-        _classPrivateFieldSet(this, _property, ((_a = _classPrivateFieldGet(this, _property)) + 1, _a));
+        _classPrivateFieldSet(this, _property, (_a = _classPrivateFieldGet(this, _property)) + 1), _a;
     };
     A.prototype.prefixPlusPlus = function () {
         _classPrivateFieldSet(this, _property, _classPrivateFieldGet(this, _property) + 1);
@@ -35,7 +35,7 @@ var A = /** @class */ (function () {
     };
     A.prototype.postfixMinusMinus = function () {
         var _a;
-        _classPrivateFieldSet(this, _property, ((_a = _classPrivateFieldGet(this, _property)) - 1, _a));
+        _classPrivateFieldSet(this, _property, (_a = _classPrivateFieldGet(this, _property)) - 1), _a;
     };
     return A;
 }());
