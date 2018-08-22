@@ -13,7 +13,6 @@ class A {
 >this.#property++ : number
 >this.#property : number
 >this : this
->#property : number
     }
     prefixPlusPlus() {
 >prefixPlusPlus : () => void
@@ -22,7 +21,6 @@ class A {
 >++this.#property : number
 >this.#property : number
 >this : this
->#property : number
     }
     prefixMinusMinus() {
 >prefixMinusMinus : () => void
@@ -31,7 +29,6 @@ class A {
 >--this.#property : number
 >this.#property : number
 >this : this
->#property : number
     }
     postfixMinusMinus() {
 >postfixMinusMinus : () => void
@@ -40,7 +37,6 @@ class A {
 >this.#property-- : number
 >this.#property : number
 >this : this
->#property : number
     }
 }
 
