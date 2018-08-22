@@ -13,12 +13,10 @@ class A {
 >x : Symbol(x, Decl(functionValuedProperty.ts, 3, 13))
 >this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
->#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 
         this.#func = function (x: string) {
 >this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
->#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >x : Symbol(x, Decl(functionValuedProperty.ts, 4, 31))
 
             return parseInt(x);
@@ -30,12 +28,10 @@ class A {
 >y : Symbol(y, Decl(functionValuedProperty.ts, 7, 13))
 >this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
->#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 
         (this.#func = function (x: string) {
 >this.#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >this : Symbol(A, Decl(functionValuedProperty.ts, 0, 0))
->#func : Symbol(A[#func], Decl(functionValuedProperty.ts, 0, 9))
 >x : Symbol(x, Decl(functionValuedProperty.ts, 8, 32))
 
             return 4;

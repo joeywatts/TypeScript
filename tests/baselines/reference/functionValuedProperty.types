@@ -14,14 +14,12 @@ class A {
 >this.#func("hello") : number
 >this.#func : (x: string) => number
 >this : this
->#func : (x: string) => number
 >"hello" : "hello"
 
         this.#func = function (x: string) {
 >this.#func = function (x: string) {            return parseInt(x);        } : (x: string) => number
 >this.#func : (x: string) => number
 >this : this
->#func : (x: string) => number
 >function (x: string) {            return parseInt(x);        } : (x: string) => number
 >x : string
 
@@ -37,7 +35,6 @@ class A {
 >(this.#func) : (x: string) => number
 >this.#func : (x: string) => number
 >this : this
->#func : (x: string) => number
 >"test" : "test"
 
         (this.#func = function (x: string) {
@@ -46,7 +43,6 @@ class A {
 >this.#func = function (x: string) {            return 4;        } : (x: string) => number
 >this.#func : (x: string) => number
 >this : this
->#func : (x: string) => number
 >function (x: string) {            return 4;        } : (x: string) => number
 >x : string
 
