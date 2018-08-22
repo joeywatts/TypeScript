@@ -526,7 +526,7 @@ namespace ts {
                             ),
                             node.expression
                         ),
-                        "apply"
+                        "call"
                     ),
                     node.typeArguments,
                     [node.expression.expression, ...node.arguments]
@@ -546,7 +546,7 @@ namespace ts {
                                 accessPrivateName(node.expression.expression.name)
                             )
                         ),
-                        "apply"
+                        "call"
                     ),
                     node.typeArguments,
                     [node.expression.expression.expression, ...node.arguments]
