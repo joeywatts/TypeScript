@@ -450,20 +450,84 @@ namespace ts {
             return visitEachChild(node, visitor, context);
         }
 
+        function wrapPrivateNameForDestructuringAssignment(node: PrivateNamedPropertyAccessExpression): Expression {
+            const parameterName = createIdentifier("x");
+            const parameter = createParameter(
+                /*decorators*/ undefined,
+                /*modifiers*/ undefined,
+                /*dotDotDotToken*/ undefined,
+                parameterName,
+                /*questionToken*/ undefined,
+                /*type*/ undefined,
+                /*initializer*/ undefined
+            );
+            const setterName = createIdentifier("value");
+            return createPropertyAccess(
+                createObjectLiteral([
+                    createSetAccessor(
+                        /*decorators*/ undefined,
+                        /*modifiers*/ undefined,
+                        setterName,
+                        [parameter],
+                        createBlock([createReturn(createAssignment(node, parameterName))])
+                    )
+                ]),
+                setterName
+            );
+        }
+
         /**
          * Visits a BinaryExpression that contains a destructuring assignment.
          *
          * @param node A BinaryExpression node.
          */
         function visitBinaryExpression(node: BinaryExpression, noDestructuringValue: boolean): Expression {
-            if (isDestructuringAssignment(node) && node.left.transformFlags & TransformFlags.ContainsObjectRest) {
-                return flattenDestructuringAssignment(
-                    node,
-                    visitor,
-                    context,
-                    FlattenLevel.ObjectRest,
-                    !noDestructuringValue
-                );
+            if (isDestructuringAssignment(node)) {
+                // Check for private name assignments.
+                let leftExpr = node.left;
+                if (isArrayLiteralExpression(leftExpr)) {
+                    const hasPrivateNames = forEach(leftExpr.elements, isPrivateNamedPropertyAccessExpression);
+                    if (hasPrivateNames) {
+                        leftExpr = updateArrayLiteral(
+                            leftExpr,
+                            leftExpr.elements.map(
+                                element => isPrivateNamedPropertyAccessExpression(element) ?
+                                    wrapPrivateNameForDestructuringAssignment(element) :
+                                    element
+                            )
+                        );
+                    }
+                }
+                else {
+                    const hasPrivateNames = forEach(
+                        leftExpr.properties,
+                        prop => isPropertyAssignment(prop) && isPrivateNamedPropertyAccessExpression(prop.initializer)
+                    );
+                    if (hasPrivateNames) {
+                        leftExpr = updateObjectLiteral(
+                            leftExpr,
+                            leftExpr.properties.map(
+                                prop => isPropertyAssignment(prop) && isPrivateNamedPropertyAccessExpression(prop.initializer) ?
+                                    updatePropertyAssignment(prop, prop.name, wrapPrivateNameForDestructuringAssignment(prop.initializer)) :
+                                    prop
+                            )
+                        );
+                    }
+                }
+                if (leftExpr !== node.left || (node.left.transformFlags & TransformFlags.ContainsObjectRest)) {
+                    return flattenDestructuringAssignment(
+                        updateBinary(
+                            node,
+                            leftExpr,
+                            node.right,
+                            node.operatorToken
+                        ) as DestructuringAssignment,
+                        visitor,
+                        context,
+                        (node.left.transformFlags & TransformFlags.ContainsObjectRest) ? FlattenLevel.ObjectRest : FlattenLevel.All,
+                        !noDestructuringValue
+                    );
+                }
             }
             else if (node.operatorToken.kind === SyntaxKind.CommaToken) {
                 return updateBinary(
