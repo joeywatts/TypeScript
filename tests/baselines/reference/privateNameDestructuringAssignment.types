@@ -1,0 +1,37 @@
+=== tests/cases/conformance/classes/members/privateNames/privateNameDestructuringAssignment.ts ===
+class Test {
+>Test : Test
+
+    #myPropDefault = 23;
+>#myPropDefault : number
+>23 : 23
+
+    #myProp: number;
+>#myProp : number
+
+    constructor() {
+        ({ value: this.#myProp } = { value: 10 });
+>({ value: this.#myProp } = { value: 10 }) : { value: number; }
+>{ value: this.#myProp } = { value: 10 } : { value: number; }
+>{ value: this.#myProp } : { value: number; }
+>value : number
+>this.#myProp : number
+>this : this
+>{ value: 10 } : { value: number; }
+>value : number
+>10 : 10
+
+        ({ something: this.#myProp } = { something: this.#myPropDefault });
+>({ something: this.#myProp } = { something: this.#myPropDefault }) : { something: number; }
+>{ something: this.#myProp } = { something: this.#myPropDefault } : { something: number; }
+>{ something: this.#myProp } : { something: number; }
+>something : number
+>this.#myProp : number
+>this : this
+>{ something: this.#myPropDefault } : { something: number; }
+>something : number
+>this.#myPropDefault : number
+>this : this
+    }
+}
+
