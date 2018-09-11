@@ -1056,6 +1056,9 @@ declare namespace ts {
         expression: LeftHandSideExpression;
         name: Identifier | PrivateName;
     }
+    interface PrivateNamedPropertyAccessExpression extends PropertyAccessExpression {
+        name: PrivateName;
+    }
     interface SuperPropertyAccessExpression extends PropertyAccessExpression {
         expression: SuperExpression;
     }
@@ -3462,6 +3465,7 @@ declare namespace ts {
     function isClassLike(node: Node): node is ClassLikeDeclaration;
     function isAccessor(node: Node): node is AccessorDeclaration;
     function isPrivateNamedPropertyDeclaration(node: Node): node is PrivateNamedPropertyDeclaration;
+    function isPrivateNamedPropertyAccessExpression(node: Node): node is PrivateNamedPropertyAccessExpression;
     function isTypeElement(node: Node): node is TypeElement;
     function isClassOrTypeElement(node: Node): node is ClassElement | TypeElement;
     function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike;
