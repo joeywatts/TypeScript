@@ -6095,6 +6095,10 @@ namespace ts {
         return node && isPropertyDeclaration(node) && isPrivateName(node.name);
     }
 
+    export function isPrivateNamedPropertyAccessExpression(node: Node): node is PrivateNamedPropertyAccessExpression {
+        return node && isPropertyAccessExpression(node) && isPrivateName(node.name);
+    }
+
     // Type members
 
     export function isTypeElement(node: Node): node is TypeElement {
