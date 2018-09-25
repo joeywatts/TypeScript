@@ -332,11 +332,12 @@ namespace ts {
 
         function transformConstructor(node: ClassDeclaration | ClassExpression, isDerivedClass: boolean) {
             const constructor = visitNode(getFirstConstructorWithBody(node), visitor, isConstructorDeclaration);
-            if (!(node.transformFlags & TransformFlags.ContainsPropertyInitializer)) {
+            const properties = filter(node.members, node => isPropertyDeclaration(node) && !hasStaticModifier(node)) as ReadonlyArray<PropertyDeclaration>;
+            if (!(node.transformFlags & TransformFlags.ContainsPropertyInitializer) && !some(properties)) {
                 return constructor;
             }
             const parameters = visitParameterList(constructor ? constructor.parameters : undefined, visitor, context);
-            const body = transformConstructorBody(node, constructor, isDerivedClass);
+            const body = transformConstructorBody(node, constructor, isDerivedClass, properties);
             if (!body) {
                 return undefined;
             }
@@ -356,9 +357,7 @@ namespace ts {
             );
         }
 
-        function transformConstructorBody(node: ClassDeclaration | ClassExpression, constructor: ConstructorDeclaration | undefined, isDerivedClass: boolean) {
-            const properties = getInitializedProperties(node, /*isStatic*/ false);
-
+        function transformConstructorBody(node: ClassDeclaration | ClassExpression, constructor: ConstructorDeclaration | undefined, isDerivedClass: boolean, properties: ReadonlyArray<PropertyDeclaration>) {
             // Only generate synthetic constructor when there are property initializers to move.
             if (!constructor && !some(properties)) {
                 return visitFunctionBody(/*node*/ undefined, visitor, context);
@@ -467,7 +466,7 @@ namespace ts {
             const propertyName = isComputedPropertyName(property.name) && !isSimpleInlineableExpression(property.name.expression)
                 ? updateComputedPropertyName(property.name, getGeneratedNameForNode(property.name))
                 : property.name;
-            const initializer = visitNode(property.initializer!, visitor, isExpression);
+            const initializer = visitNode(property.initializer, visitor, isExpression) || createVoidZero();
             const memberAccess = createMemberAccessForPropertyName(receiver, propertyName, /*location*/ propertyName);
 
             return createAssignment(memberAccess, initializer);
