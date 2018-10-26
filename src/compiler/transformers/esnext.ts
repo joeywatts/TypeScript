@@ -12,6 +12,7 @@ namespace ts {
 
     export function transformESNext(context: TransformationContext) {
         const {
+            startLexicalEnvironment,
             resumeLexicalEnvironment,
             endLexicalEnvironment,
             hoistVariableDeclaration
@@ -84,6 +85,8 @@ namespace ts {
                 return node;
             }
             switch (node.kind) {
+                case SyntaxKind.Block:
+                    return visitBlock(node as Block);
                 case SyntaxKind.AwaitExpression:
                     return visitAwaitExpression(node as AwaitExpression);
                 case SyntaxKind.YieldExpression:
@@ -503,6 +506,18 @@ namespace ts {
             }
         }
 
+        function visitBlock(node: Block): Block {
+            startLexicalEnvironment(LexicalEnvironmentScoping.Block);
+            node = visitEachChild(node, visitor, context);
+            const declarations = endLexicalEnvironment();
+            if (some(declarations)) {
+                return updateBlock(
+                    node,
+                    mergeLexicalEnvironment(node.statements, declarations)
+                );
+            }
+            return node;
+        }
 
         function visitAwaitExpression(node: AwaitExpression): Expression {
             if (enclosingFunctionFlags & FunctionFlags.Async && enclosingFunctionFlags & FunctionFlags.Generator) {
