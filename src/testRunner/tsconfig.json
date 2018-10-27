@@ -88,7 +88,6 @@
         "unittests/versionCache.ts",
         "unittests/evaluation/asyncArrow.ts",
         "unittests/evaluation/asyncGenerator.ts",
-        "unittests/evaluation/computedFieldLoop.ts",
         "unittests/evaluation/forAwaitOf.ts",
         "unittests/services/colorization.ts",
         "unittests/services/documentRegistry.ts",
