@@ -3276,11 +3276,6 @@ namespace ts {
             transformFlags |= TransformFlags.AssertTypeScript;
         }
 
-        // Hoisted variables related to class properties should live within the TypeScript class wrapper.
-        if (isComputedPropertyName(node.name) || (hasStaticModifier(node) && node.initializer)) {
-            transformFlags |= TransformFlags.ContainsTypeScriptClassSyntax;
-        }
-
         node.transformFlags = transformFlags | TransformFlags.HasComputedFlags;
         return transformFlags & ~TransformFlags.NodeExcludes;
     }
@@ -3363,6 +3358,11 @@ namespace ts {
         // Decorators, TypeScript-specific modifiers, and type annotations are TypeScript syntax.
         if (some(node.decorators) || hasModifier(node, ModifierFlags.TypeScriptModifier) || node.type) {
             transformFlags |= TransformFlags.AssertTypeScript;
+        }
+
+        // Hoisted variables related to class properties should live within the TypeScript class wrapper.
+        if (isComputedPropertyName(node.name) || (hasStaticModifier(node) && node.initializer)) {
+            transformFlags |= TransformFlags.ContainsTypeScriptClassSyntax;
         }
 
         node.transformFlags = transformFlags | TransformFlags.HasComputedFlags;
