@@ -10,21 +10,29 @@ namespace ts {
         ClassAliases = 1 << 1,
     }
 
+
     /**
      * A mapping of private names to information needed for transformation.
      */
-    type PrivateNameEnvironment = UnderscoreEscapedMap<PrivateNamedInstanceField>;
+    type PrivateNameEnvironment = UnderscoreEscapedMap<PrivateNamedInstanceField | PrivateNamedInstanceMethod>;
 
     /**
      * Identifies the type of private name.
      */
-    const enum PrivateNameType {
-        InstanceField
+    const enum PrivateNamePlacement {
+        InstanceField,
+        InstanceMethod
     }
 
     interface PrivateNamedInstanceField {
-        type: PrivateNameType.InstanceField;
-        weakMapName: Identifier;
+        placement: PrivateNamePlacement.InstanceField;
+        accumulator: Identifier;
+    }
+
+    interface PrivateNamedInstanceMethod {
+        placement: PrivateNamePlacement.InstanceMethod;
+        accumulator: Identifier;
+        funcName: Identifier;
     }
 
     export function transformESNext(context: TransformationContext) {
@@ -365,8 +373,9 @@ namespace ts {
 
         function transformClassMembers(node: ClassDeclaration | ClassExpression, isDerivedClass: boolean) {
             // Declare private names.
-            const privateProperties = filter(node.members, isPrivatePropertyDeclaration);
-            privateProperties.forEach(property => addPrivateNameToEnvironment(property.name));
+            node.members
+                .filter(element => isNamedDeclaration(element) && isPrivateName(element.name))
+                .forEach(addPrivateName);
 
             const members: ClassElement[] = [];
             const constructor = transformConstructor(node, isDerivedClass);
@@ -528,10 +537,10 @@ namespace ts {
             if (isPrivateName(propertyName)) {
                 const privateNameInfo = accessPrivateName(propertyName);
                 if (privateNameInfo) {
-                    switch (privateNameInfo.type) {
-                        case PrivateNameType.InstanceField: {
+                    switch (privateNameInfo.placement) {
+                        case PrivateNamePlacement.InstanceField: {
                             return createCall(
-                                createPropertyAccess(privateNameInfo.weakMapName, "set"),
+                                createPropertyAccess(privateNameInfo.accumulator, "set"),
                                 /*typeArguments*/ undefined,
                                 [receiver, initializer || createVoidZero()]
                             );
@@ -557,17 +566,68 @@ namespace ts {
             privateNameEnvironmentStack.pop();
         }
 
-        function addPrivateNameToEnvironment(name: PrivateName) {
+        function privateNamedMethodToFunction (declaration: MethodDeclaration, funcName: Identifier, accumulator: Identifier): FunctionDeclaration {
+            const params = declaration.parameters;
+            let body = getMutableClone(declaration.body || createBlock([], true));
+            body = visitEachChild(body, visitor, context);
+            const toPrepend = startOnNewLine(
+                createStatement(
+                    createClassPrivateNamedCallCheckHelper(context, accumulator)
+                )
+            );
+            body.statements = setTextRange(
+                createNodeArray([
+                    toPrepend,
+                    ...body.statements
+                ]),
+                body.statements
+            );
+            const func = createFunctionDeclaration(
+                /* decorators */      undefined,
+                /* modifiers */       undefined,
+                /* asteriskToken */   undefined,
+                                      funcName,
+                /* typeParameters */  undefined,
+                                      params,
+                /* type */            undefined,
+                body) as FunctionDeclaration;
+            return func;
+        }
+
+
+        function addPrivateName(element: ClassElement & { name: PrivateName }) {
             const env = last(privateNameEnvironmentStack);
-            const text = getTextOfPropertyName(name) as string;
-            const weakMapName = createFileLevelUniqueName("_" + text.substring(1));
-            hoistVariableDeclaration(weakMapName);
-            env.set(name.escapedText, { type: PrivateNameType.InstanceField, weakMapName });
-            (pendingExpressions || (pendingExpressions = [])).push(
+            const text = getTextOfPropertyName(element.name) as string;
+            const accumulator = createFileLevelUniqueName("_" + text.substring(1));
+            const { escapedText } = element.name;
+            hoistVariableDeclaration(accumulator);
+
+            let identifierName: string;
+            if (hasModifier(element, ModifierFlags.Static)) {
+                // statics not supported yet
+                return;
+            }
+            if (isPropertyDeclaration(element)) {
+                identifierName = "WeakMap";
+                env.set(escapedText, { placement: PrivateNamePlacement.InstanceField, accumulator });
+            }
+            else if (isMethodDeclaration(element)) {
+                identifierName = "WeakSet";
+                const escapedText = element.name.escapedText;
+                const escapedTextNoHash = `_${`${escapedText}`.slice(1)}`;
+                const funcName: Identifier = createFileLevelUniqueName(escapedTextNoHash);
+                const func = privateNamedMethodToFunction(element, funcName, accumulator);
+                env.set(escapedText, { placement: PrivateNamePlacement.InstanceMethod, accumulator, funcName }); 
+                (pendingStatements = pendingStatements || []).push(func);
+            }
+            else {
+                return;
+            }
+            (pendingExpressions = pendingExpressions || []).push(
                 createAssignment(
-                    weakMapName,
+                    accumulator,
                     createNew(
-                        createIdentifier("WeakMap"),
+                        createIdentifier(identifierName),
                         /*typeArguments*/ undefined,
                         []
                     )
@@ -589,14 +649,14 @@ namespace ts {
             if (isPrivateName(node.name)) {
                 const privateNameInfo = accessPrivateName(node.name);
                 if (privateNameInfo) {
-                    switch (privateNameInfo.type) {
-                        case PrivateNameType.InstanceField:
+                    switch (privateNameInfo.placement) {
+                        case PrivateNamePlacement.InstanceField:
                             return setOriginalNode(
                                 setTextRange(
                                     createClassPrivateFieldGetHelper(
                                         context,
                                         visitNode(node.expression, visitor, isExpression), 
-                                        privateNameInfo.weakMapName
+                                        privateNameInfo.accumulator
                                     ),
                                     node
                                 ),
@@ -903,7 +963,7 @@ namespace ts {
             }
             else if (isAssignmentExpression(node) && isPropertyAccessExpression(node.left) && isPrivateName(node.left.name)) {
                 const privateNameInfo = accessPrivateName(node.left.name);
-                if (privateNameInfo && privateNameInfo.type === PrivateNameType.InstanceField) {
+                if (privateNameInfo && privateNameInfo.placement === PrivateNamePlacement.InstanceField) {
                     if (isCompoundAssignment(node.operatorToken.kind)) {
                         const isReceiverInlineable = isSimpleInlineableExpression(node.left.expression);
                         const getReceiver = isReceiverInlineable ? node.left.expression : createTempVariable(hoistVariableDeclaration);
@@ -914,12 +974,12 @@ namespace ts {
                             createClassPrivateFieldSetHelper(
                                 context,
                                 setReceiver,
-                                privateNameInfo.weakMapName,
+                                privateNameInfo.accumulator,
                                 createBinary(
                                     createClassPrivateFieldGetHelper(
                                         context,
                                         getReceiver,
-                                        privateNameInfo.weakMapName
+                                        privateNameInfo.accumulator
                                     ),
                                     getOperatorForCompoundAssignment(node.operatorToken.kind),
                                     visitNode(node.right, visitor)
@@ -933,7 +993,7 @@ namespace ts {
                             createClassPrivateFieldSetHelper(
                                 context,
                                 node.left.expression,
-                                privateNameInfo.weakMapName,
+                                privateNameInfo.accumulator,
                                 visitNode(node.right, visitor)
                             ),
                             node
@@ -1789,4 +1849,15 @@ namespace ts {
         context.requestEmitHelper(classPrivateFieldSetHelper);
         return createCall(getHelperName("_classPrivateFieldSet"), /* typeArguments */ undefined, [receiver, privateField, value]);
     }
+    const classPrivateNamedCallCheckHelper: EmitHelper = {
+        name: "typescript:classPrivateNamedCallCheck",
+        scoped: false,
+        text: `var _classPrivateNamedCallCheck = function (receiver, privateSet) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get weak field on non-instance"); }};`
+    };
+
+    function createClassPrivateNamedCallCheckHelper(context: TransformationContext, weakSet: Identifier) {
+        context.requestEmitHelper(classPrivateNamedCallCheckHelper);
+        return createCall(getHelperName("_classPrivateNamedCallCheck"), /* typeArguments */ undefined, [ createThis(), weakSet ]);
+    }
+
 }
