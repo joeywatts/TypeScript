@@ -5232,7 +5232,7 @@ namespace ts {
     export const enum LexicalEnvironmentScoping {
         Function,
         Block
-    };
+    }
 
     export interface TransformationContext {
         /*@internal*/ getEmitResolver(): EmitResolver;
