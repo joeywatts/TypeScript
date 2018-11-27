@@ -92,6 +92,8 @@ namespace ts {
         let lexicalEnvironmentFunctionDeclarations: FunctionDeclaration[];
         let lexicalEnvironmentVariableDeclarationsStack: VariableDeclaration[][] = [];
         let lexicalEnvironmentFunctionDeclarationsStack: FunctionDeclaration[][] = [];
+        let lexicalEnvironmentScopingStack: LexicalEnvironmentScoping[] = [];
+        let lexicalEnvironmentScoping: LexicalEnvironmentScoping;
         let lexicalEnvironmentStackOffset = 0;
         let lexicalEnvironmentSuspended = false;
         let emitHelpers: EmitHelper[] | undefined;
@@ -266,7 +268,7 @@ namespace ts {
          * Starts a new lexical environment. Any existing hoisted variable or function declarations
          * are pushed onto a stack, and the related storage variables are reset.
          */
-        function startLexicalEnvironment(): void {
+        function startLexicalEnvironment(scoping: LexicalEnvironmentScoping = LexicalEnvironmentScoping.Function): void {
             Debug.assert(state > TransformationState.Uninitialized, "Cannot modify the lexical environment during initialization.");
             Debug.assert(state < TransformationState.Completed, "Cannot modify the lexical environment after transformation has completed.");
             Debug.assert(!lexicalEnvironmentSuspended, "Lexical environment is suspended.");
@@ -275,11 +277,13 @@ namespace ts {
             // stack size variable. This allows us to reuse existing array slots we've
             // already allocated between transformations to avoid allocation and GC overhead during
             // transformation.
+            lexicalEnvironmentScopingStack[lexicalEnvironmentStackOffset] = lexicalEnvironmentScoping;
             lexicalEnvironmentVariableDeclarationsStack[lexicalEnvironmentStackOffset] = lexicalEnvironmentVariableDeclarations;
             lexicalEnvironmentFunctionDeclarationsStack[lexicalEnvironmentStackOffset] = lexicalEnvironmentFunctionDeclarations;
             lexicalEnvironmentStackOffset++;
             lexicalEnvironmentVariableDeclarations = undefined!;
             lexicalEnvironmentFunctionDeclarations = undefined!;
+            lexicalEnvironmentScoping = scoping;
         }
 
         /** Suspends the current lexical environment, usually after visiting a parameter list. */
@@ -316,7 +320,10 @@ namespace ts {
                 if (lexicalEnvironmentVariableDeclarations) {
                     const statement = createVariableStatement(
                         /*modifiers*/ undefined,
-                        createVariableDeclarationList(lexicalEnvironmentVariableDeclarations)
+                        createVariableDeclarationList(
+                            lexicalEnvironmentVariableDeclarations,
+                            lexicalEnvironmentScoping === LexicalEnvironmentScoping.Block ? NodeFlags.Let : undefined
+                        )
                     );
 
                     if (!statements) {
@@ -332,9 +339,11 @@ namespace ts {
             lexicalEnvironmentStackOffset--;
             lexicalEnvironmentVariableDeclarations = lexicalEnvironmentVariableDeclarationsStack[lexicalEnvironmentStackOffset];
             lexicalEnvironmentFunctionDeclarations = lexicalEnvironmentFunctionDeclarationsStack[lexicalEnvironmentStackOffset];
+            lexicalEnvironmentScoping = lexicalEnvironmentScopingStack[lexicalEnvironmentStackOffset];
             if (lexicalEnvironmentStackOffset === 0) {
                 lexicalEnvironmentVariableDeclarationsStack = [];
                 lexicalEnvironmentFunctionDeclarationsStack = [];
+                lexicalEnvironmentScopingStack = [];
             }
             return statements;
         }
@@ -366,6 +375,7 @@ namespace ts {
                 lexicalEnvironmentVariableDeclarationsStack = undefined!;
                 lexicalEnvironmentFunctionDeclarations = undefined!;
                 lexicalEnvironmentFunctionDeclarationsStack = undefined!;
+                lexicalEnvironmentScopingStack = undefined!;
                 onSubstituteNode = undefined!;
                 onEmitNode = undefined!;
                 emitHelpers = undefined;
