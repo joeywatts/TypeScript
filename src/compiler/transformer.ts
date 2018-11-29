@@ -92,8 +92,8 @@ namespace ts {
         let lexicalEnvironmentFunctionDeclarations: FunctionDeclaration[];
         let lexicalEnvironmentVariableDeclarationsStack: VariableDeclaration[][] = [];
         let lexicalEnvironmentFunctionDeclarationsStack: FunctionDeclaration[][] = [];
-        let lexicalEnvironmentScopingStack: LexicalEnvironmentScoping[] = [];
-        let lexicalEnvironmentScoping: LexicalEnvironmentScoping;
+        let lexicalEnvironmentScopingStack: LexicalEnvironmentKind[] = [];
+        let lexicalEnvironmentScoping: LexicalEnvironmentKind;
         let lexicalEnvironmentStackOffset = 0;
         let lexicalEnvironmentSuspended = false;
         let emitHelpers: EmitHelper[] | undefined;
@@ -268,7 +268,7 @@ namespace ts {
          * Starts a new lexical environment. Any existing hoisted variable or function declarations
          * are pushed onto a stack, and the related storage variables are reset.
          */
-        function startLexicalEnvironment(scoping: LexicalEnvironmentScoping = LexicalEnvironmentScoping.Function): void {
+        function startLexicalEnvironment(scoping: LexicalEnvironmentKind = LexicalEnvironmentKind.Function): void {
             Debug.assert(state > TransformationState.Uninitialized, "Cannot modify the lexical environment during initialization.");
             Debug.assert(state < TransformationState.Completed, "Cannot modify the lexical environment after transformation has completed.");
             Debug.assert(!lexicalEnvironmentSuspended, "Lexical environment is suspended.");
@@ -322,7 +322,7 @@ namespace ts {
                         /*modifiers*/ undefined,
                         createVariableDeclarationList(
                             lexicalEnvironmentVariableDeclarations,
-                            lexicalEnvironmentScoping === LexicalEnvironmentScoping.Block ? NodeFlags.Let : undefined
+                            lexicalEnvironmentScoping === LexicalEnvironmentKind.Block ? NodeFlags.Let : undefined
                         )
                     );
 

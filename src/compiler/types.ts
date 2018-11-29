@@ -5241,7 +5241,7 @@ namespace ts {
         writeFile: WriteFileCallback;
     }
 
-    export const enum LexicalEnvironmentScoping {
+    export const enum LexicalEnvironmentKind {
         Function,
         Block
     }
@@ -5254,7 +5254,7 @@ namespace ts {
         getCompilerOptions(): CompilerOptions;
 
         /** Starts a new lexical environment. */
-        startLexicalEnvironment(scoping?: LexicalEnvironmentScoping): void;
+        startLexicalEnvironment(kind?: LexicalEnvironmentKind): void;
 
         /** Suspends the current lexical environment, usually after visiting a parameter list. */
         suspendLexicalEnvironment(): void;

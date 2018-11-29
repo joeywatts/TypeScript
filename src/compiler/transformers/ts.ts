@@ -564,7 +564,7 @@ namespace ts {
         }
 
         function visitBlock(node: Block): Block {
-            startLexicalEnvironment(LexicalEnvironmentScoping.Block);
+            startLexicalEnvironment(LexicalEnvironmentKind.Block);
             node = visitEachChild(node, visitor, context);
             const declarations = endLexicalEnvironment();
             if (some(declarations)) {
