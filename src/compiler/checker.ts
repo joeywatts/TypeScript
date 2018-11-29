@@ -16200,6 +16200,11 @@ namespace ts {
                             if (container.kind === SyntaxKind.PropertyDeclaration && hasModifier(container, ModifierFlags.Static)) {
                                 getNodeLinks(declaration).flags |= NodeCheckFlags.ClassWithConstructorReference;
                                 getNodeLinks(node).flags |= NodeCheckFlags.ConstructorReferenceInClass;
+                                // If the class expression is in a loop and the name of the class is used,
+                                // the temporary variable which stores the evaluated class expression must be block scoped.
+                                if (getEnclosingIterationStatement(declaration)) {
+                                    getNodeLinks(declaration).flags |= NodeCheckFlags.BlockScopedBindingInLoop;
+                                }
                             }
                             break;
                         }
