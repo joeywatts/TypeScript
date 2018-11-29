@@ -17829,13 +17829,18 @@ namespace ts {
             if (!links.resolvedType) {
                 links.resolvedType = checkExpression(node.expression);
 
-                if (isPropertyDeclaration(node.parent) && isClassLike(node.parent.parent)) {
+                if (isPropertyDeclaration(node.parent) && isClassExpression(node.parent.parent)) {
                     const container = getEnclosingBlockScopeContainer(node);
                     const enclosingIterationStatement = getEnclosingIterationStatement(container);
+                    // A computed property of a class expression inside a loop must be block scoped because
+                    // the property name should be bound at class evaluation time.
                     if (enclosingIterationStatement) {
                         getNodeLinks(enclosingIterationStatement).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
+                        // The hoisted variable which stores the evaluated property name should be block scoped.
+                        getNodeLinks(node).flags |= NodeCheckFlags.BlockScopedBindingInLoop;
+                        // The temporary name of the class expression should be block scoped.
+                        getNodeLinks(node.parent.parent).flags |= NodeCheckFlags.BlockScopedBindingInLoop;
                     }
-                    links.flags |= NodeCheckFlags.BlockScopedBindingInLoop;
                 }
                 // This will allow types number, string, symbol or any. It will also allow enums, the unknown
                 // type, and any union of these types (like string | number).

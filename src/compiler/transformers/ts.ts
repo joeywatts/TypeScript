@@ -37,6 +37,8 @@ namespace ts {
             resumeLexicalEnvironment,
             endLexicalEnvironment,
             hoistVariableDeclaration,
+            startBlockScope,
+            endBlockScope
         } = context;
 
         const resolver = context.getEmitResolver();
@@ -564,9 +566,9 @@ namespace ts {
         }
 
         function visitBlock(node: Block): Block {
-            startLexicalEnvironment(LexicalEnvironmentKind.Block);
+            startBlockScope();
             node = visitEachChild(node, visitor, context);
-            const declarations = endLexicalEnvironment();
+            const declarations = endBlockScope();
             if (some(declarations)) {
                 return updateBlock(
                     node,
@@ -937,7 +939,13 @@ namespace ts {
             if (some(staticProperties) || some(pendingExpressions)) {
                 const expressions: Expression[] = [];
                 const isClassWithConstructorReference = resolver.getNodeCheckFlags(node) & NodeCheckFlags.ClassWithConstructorReference;
-                const temp = createTempVariable(hoistVariableDeclaration, !!isClassWithConstructorReference);
+                const temp = createTempVariable(
+                    name => {
+                        setOriginalNode(name, node);
+                        hoistVariableDeclaration(name);
+                    },
+                    !!isClassWithConstructorReference
+                );
                 if (isClassWithConstructorReference) {
                     // record an alias as the class name is not in scope for statics.
                     enableSubstitutionForClassAliases();
@@ -2207,6 +2215,7 @@ namespace ts {
                 const inlinable = isSimpleInlineableExpression(innerExpression);
                 if (!inlinable && shouldHoist) {
                     const generatedName = getGeneratedNameForNode(name);
+                    setOriginalNode(generatedName, name);
                     hoistVariableDeclaration(generatedName);
                     return createAssignment(generatedName, expression);
                 }

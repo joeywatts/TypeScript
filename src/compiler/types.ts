@@ -5241,11 +5241,6 @@ namespace ts {
         writeFile: WriteFileCallback;
     }
 
-    export const enum LexicalEnvironmentKind {
-        Function,
-        Block
-    }
-
     export interface TransformationContext {
         /*@internal*/ getEmitResolver(): EmitResolver;
         /*@internal*/ getEmitHost(): EmitHost;
@@ -5254,7 +5249,7 @@ namespace ts {
         getCompilerOptions(): CompilerOptions;
 
         /** Starts a new lexical environment. */
-        startLexicalEnvironment(kind?: LexicalEnvironmentKind): void;
+        startLexicalEnvironment(): void;
 
         /** Suspends the current lexical environment, usually after visiting a parameter list. */
         suspendLexicalEnvironment(): void;
@@ -5270,6 +5265,12 @@ namespace ts {
 
         /** Hoists a variable declaration to the containing scope. */
         hoistVariableDeclaration(node: Identifier): void;
+
+        /* @internal */
+        startBlockScope(): void;
+
+        /* @internal */
+        endBlockScope(): Statement[] | undefined;
 
         /** Records a request for a non-scoped emit helper in the current context. */
         requestEmitHelper(helper: EmitHelper): void;
