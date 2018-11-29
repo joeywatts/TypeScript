@@ -16305,6 +16305,10 @@ namespace ts {
             return !!findAncestor(node, n => n === threshold ? "quit" : isFunctionLike(n));
         }
 
+        function getEnclosingIterationStatement(node: Node): Node | undefined {
+            return findAncestor(node, n => (!n || nodeStartsNewLexicalEnvironment(n)) ? "quit" : isIterationStatement(n, /* lookInLabeledStatements */ false));
+        }
+
         function getPartOfForStatementContainingNode(node: Node, container: ForStatement) {
             return findAncestor(node, n => n === container ? "quit" : n === container.initializer || n === container.condition || n === container.incrementor || n === container.statement);
         }
@@ -16323,18 +16327,8 @@ namespace ts {
 
             const container = getEnclosingBlockScopeContainer(symbol.valueDeclaration);
             const usedInFunction = isInsideFunction(node.parent, container);
-            let current = container;
-
-            let containedInIterationStatement = false;
-            while (current && !nodeStartsNewLexicalEnvironment(current)) {
-                if (isIterationStatement(current, /*lookInLabeledStatements*/ false)) {
-                    containedInIterationStatement = true;
-                    break;
-                }
-                current = current.parent;
-            }
-
-            if (containedInIterationStatement) {
+            const enclosingIterationStatement = getEnclosingIterationStatement(container);
+            if (enclosingIterationStatement) {
                 if (usedInFunction) {
                     // mark iteration statement as containing block-scoped binding captured in some function
                     let capturesBlockScopeBindingInLoopBody = true;
@@ -16354,7 +16348,7 @@ namespace ts {
                         }
                     }
                     if (capturesBlockScopeBindingInLoopBody) {
-                        getNodeLinks(current).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
+                        getNodeLinks(enclosingIterationStatement).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
                     }
                 }
 
@@ -17837,17 +17831,9 @@ namespace ts {
 
                 if (isPropertyDeclaration(node.parent) && isClassLike(node.parent.parent)) {
                     const container = getEnclosingBlockScopeContainer(node);
-                    let current = container;
-                    let containedInIterationStatement = false;
-                    while (current && !nodeStartsNewLexicalEnvironment(current)) {
-                        if (isIterationStatement(current, /*lookInLabeledStatements*/ false)) {
-                            containedInIterationStatement = true;
-                            break;
-                        }
-                        current = current.parent;
-                    }
-                    if (containedInIterationStatement) {
-                        getNodeLinks(current).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
+                    const enclosingIterationStatement = getEnclosingIterationStatement(container);
+                    if (enclosingIterationStatement) {
+                        getNodeLinks(enclosingIterationStatement).flags |= NodeCheckFlags.LoopWithCapturedBlockScopedBinding;
                     }
                     links.flags |= NodeCheckFlags.BlockScopedBindingInLoop;
                 }
