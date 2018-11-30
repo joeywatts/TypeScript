@@ -1,0 +1,59 @@
+=== tests/cases/conformance/classes/propertyMemberDeclarations/initializerReferencingBlockScopeBinding.ts ===
+let arr = [];
+>arr : any[]
+>[] : undefined[]
+
+for (let i = 0; i < 5; ++i) {
+>i : number
+>0 : 0
+>i < 5 : boolean
+>i : number
+>5 : 5
+>++i : number
+>i : number
+
+    arr.push(class C {
+>arr.push(class C {        test = i;    }) : number
+>arr.push : (...items: any[]) => number
+>arr : any[]
+>push : (...items: any[]) => number
+>class C {        test = i;    } : typeof C
+>C : typeof C
+
+        test = i;
+>test : number
+>i : number
+
+    });
+    class A {
+>A : A
+
+        test = i * 2;
+>test : number
+>i * 2 : number
+>i : number
+>2 : 2
+    }
+    arr.push(A);
+>arr.push(A) : number
+>arr.push : (...items: any[]) => number
+>arr : any[]
+>push : (...items: any[]) => number
+>A : typeof A
+}
+arr.forEach(clazz => console.log(new clazz().test));
+>arr.forEach(clazz => console.log(new clazz().test)) : void
+>arr.forEach : (callbackfn: (value: any, index: number, array: any[]) => void, thisArg?: any) => void
+>arr : any[]
+>forEach : (callbackfn: (value: any, index: number, array: any[]) => void, thisArg?: any) => void
+>clazz => console.log(new clazz().test) : (clazz: any) => void
+>clazz : any
+>console.log(new clazz().test) : void
+>console.log : (message?: any, ...optionalParams: any[]) => void
+>console : Console
+>log : (message?: any, ...optionalParams: any[]) => void
+>new clazz().test : any
+>new clazz() : any
+>clazz : any
+>test : any
+

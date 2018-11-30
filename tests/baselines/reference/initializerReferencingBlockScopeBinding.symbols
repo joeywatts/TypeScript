@@ -1,0 +1,43 @@
+=== tests/cases/conformance/classes/propertyMemberDeclarations/initializerReferencingBlockScopeBinding.ts ===
+let arr = [];
+>arr : Symbol(arr, Decl(initializerReferencingBlockScopeBinding.ts, 0, 3))
+
+for (let i = 0; i < 5; ++i) {
+>i : Symbol(i, Decl(initializerReferencingBlockScopeBinding.ts, 1, 8))
+>i : Symbol(i, Decl(initializerReferencingBlockScopeBinding.ts, 1, 8))
+>i : Symbol(i, Decl(initializerReferencingBlockScopeBinding.ts, 1, 8))
+
+    arr.push(class C {
+>arr.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>arr : Symbol(arr, Decl(initializerReferencingBlockScopeBinding.ts, 0, 3))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>C : Symbol(C, Decl(initializerReferencingBlockScopeBinding.ts, 2, 13))
+
+        test = i;
+>test : Symbol(C.test, Decl(initializerReferencingBlockScopeBinding.ts, 2, 22))
+>i : Symbol(i, Decl(initializerReferencingBlockScopeBinding.ts, 1, 8))
+
+    });
+    class A {
+>A : Symbol(A, Decl(initializerReferencingBlockScopeBinding.ts, 4, 7))
+
+        test = i * 2;
+>test : Symbol(A.test, Decl(initializerReferencingBlockScopeBinding.ts, 5, 13))
+>i : Symbol(i, Decl(initializerReferencingBlockScopeBinding.ts, 1, 8))
+    }
+    arr.push(A);
+>arr.push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>arr : Symbol(arr, Decl(initializerReferencingBlockScopeBinding.ts, 0, 3))
+>push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
+>A : Symbol(A, Decl(initializerReferencingBlockScopeBinding.ts, 4, 7))
+}
+arr.forEach(clazz => console.log(new clazz().test));
+>arr.forEach : Symbol(Array.forEach, Decl(lib.es5.d.ts, --, --))
+>arr : Symbol(arr, Decl(initializerReferencingBlockScopeBinding.ts, 0, 3))
+>forEach : Symbol(Array.forEach, Decl(lib.es5.d.ts, --, --))
+>clazz : Symbol(clazz, Decl(initializerReferencingBlockScopeBinding.ts, 10, 12))
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>clazz : Symbol(clazz, Decl(initializerReferencingBlockScopeBinding.ts, 10, 12))
+
