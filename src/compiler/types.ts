@@ -957,6 +957,11 @@ namespace ts {
         initializer?: Expression;           // Optional initializer
     }
 
+    /*@internal*/
+    export interface PrivateNamedPropertyDeclaration extends PropertyDeclaration {
+        name: PrivateName;
+    }
+
     export interface ObjectLiteralElement extends NamedDeclaration {
         _objectLiteralBrand: any;
         name?: PropertyName;
@@ -1786,6 +1791,11 @@ namespace ts {
         kind: SyntaxKind.PropertyAccessExpression;
         expression: LeftHandSideExpression;
         name: Identifier | PrivateName;
+    }
+
+    /*@internal*/
+    export interface PrivateNamedPropertyAccessExpression extends PropertyAccessExpression {
+        name: PrivateName;
     }
 
     export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
