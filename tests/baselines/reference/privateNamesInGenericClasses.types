@@ -12,15 +12,15 @@ class C<T> {
 >x : C<T>
 
     baz(x: C<number>) { return x.#foo; }     // OK
->baz : (x: C<number>) => number
+>baz : (x: C<number>) => T
 >x : C<number>
->x.#foo : number
+>x.#foo : T
 >x : C<number>
 
     quux(x: C<string>) { return x.#foo; }    // OK
->quux : (x: C<string>) => string
+>quux : (x: C<string>) => T
 >x : C<string>
->x.#foo : string
+>x.#foo : T
 >x : C<string>
 }
 

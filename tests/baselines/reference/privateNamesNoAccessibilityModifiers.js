@@ -1,6 +1,4 @@
 //// [privateNamesNoAccessibilityModifiers.ts]
-// @target es6
-
 class A {
     public #foo = 3;         // Error
     private #bar = 3;        // Error
@@ -10,19 +8,14 @@ class A {
 
 
 //// [privateNamesNoAccessibilityModifiers.js]
-// @target es6
-var _foo, _bar, _baz, _qux;
-<<<<<<< HEAD
-=======
 "use strict";
->>>>>>> 4427a64bc2... Add private named instance field transformation (#31)
-var A = /** @class */ (function () {
-    function A() {
+var _foo, _bar, _baz, _qux;
+class A {
+    constructor() {
         _foo.set(this, 3); // Error
         _bar.set(this, 3); // Error
         _baz.set(this, 3); // Error
         _qux.set(this, 3); // OK
     }
-    return A;
-}());
+}
 _foo = new WeakMap(), _bar = new WeakMap(), _baz = new WeakMap(), _qux = new WeakMap();

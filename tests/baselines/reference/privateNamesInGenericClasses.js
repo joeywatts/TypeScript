@@ -14,20 +14,23 @@ b = a;                                    // Error
 
 
 //// [privateNamesInGenericClasses.js]
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
-var _foo;
 "use strict";
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to get private field on non-instance");
+    }
+    return privateMap.get(receiver);
+};
 var _foo;
 class C {
     constructor() {
         _foo.set(this, void 0);
     }
-    bar(x) { return _classPrivateFieldGet(x, _foo); } // OK
-    baz(x) { return _classPrivateFieldGet(x, _foo); } // OK
-    quux(x) { return _classPrivateFieldGet(x, _foo); } // OK
+    bar(x) { return __classPrivateFieldGet(x, _foo); } // OK
+    baz(x) { return __classPrivateFieldGet(x, _foo); } // OK
+    quux(x) { return __classPrivateFieldGet(x, _foo); } // OK
 }
 _foo = new WeakMap();
-a.#foo; // Error
+a.; // Error
 a = b; // Error
 b = a; // Error

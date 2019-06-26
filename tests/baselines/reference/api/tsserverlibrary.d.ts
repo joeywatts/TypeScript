@@ -151,7 +151,7 @@ declare namespace ts {
         BarEqualsToken = 71,
         CaretEqualsToken = 72,
         Identifier = 73,
-        PrivateName = 74,
+        PrivateIdentifier = 74,
         BreakKeyword = 75,
         CaseKeyword = 76,
         CatchKeyword = 77,
@@ -538,10 +538,17 @@ declare namespace ts {
         left: EntityName;
         right: Identifier;
     }
+<<<<<<< HEAD
     export type EntityName = Identifier | QualifiedName;
     export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateName;
     export type DeclarationName = Identifier | PrivateName | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
     export interface Declaration extends Node {
+=======
+    type EntityName = Identifier | QualifiedName;
+    type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+    type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+    interface Declaration extends Node {
+>>>>>>> 1b6f80d976... Incorporate PR feedback
         _declarationBrand: any;
     }
     export interface NamedDeclaration extends Declaration {
@@ -555,8 +562,13 @@ declare namespace ts {
         kind: SyntaxKind.ComputedPropertyName;
         expression: Expression;
     }
+<<<<<<< HEAD
     export interface PrivateName extends PrimaryExpression, Declaration {
         kind: SyntaxKind.PrivateName;
+=======
+    interface PrivateIdentifier extends Node {
+        kind: SyntaxKind.PrivateIdentifier;
+>>>>>>> 1b6f80d976... Incorporate PR feedback
         escapedText: __String;
     }
     export interface Decorator extends Node {
@@ -1082,7 +1094,7 @@ declare namespace ts {
     export interface PropertyAccessExpression extends MemberExpression, NamedDeclaration {
         kind: SyntaxKind.PropertyAccessExpression;
         expression: LeftHandSideExpression;
-        name: Identifier | PrivateName;
+        name: Identifier | PrivateIdentifier;
     }
     export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
         expression: SuperExpression;
@@ -1091,6 +1103,7 @@ declare namespace ts {
     export interface PropertyAccessEntityNameExpression extends PropertyAccessExpression {
         _propertyAccessExpressionLikeQualifiedNameBrand?: any;
         expression: EntityNameExpression;
+        name: Identifier;
     }
     export interface ElementAccessExpression extends MemberExpression {
         kind: SyntaxKind.ElementAccessExpression;
@@ -1944,7 +1957,7 @@ declare namespace ts {
         getDeclaredTypeOfSymbol(symbol: Symbol): Type;
         getPropertiesOfType(type: Type): Symbol[];
         getPropertyOfType(type: Type, propertyName: string): Symbol | undefined;
-        getPropertyForPrivateName(apparentType: Type, leftType: Type, right: PrivateName, errorNode: Node | undefined): Symbol | undefined;
+        getPropertyForPrivateIdentifier(leftType: Type, right: PrivateIdentifier, errorNode: Node | undefined): Symbol | undefined;
         getIndexInfoOfType(type: Type, kind: IndexKind): IndexInfo | undefined;
         getSignaturesOfType(type: Type, kind: SignatureKind): readonly Signature[];
         getIndexTypeOfType(type: Type, kind: IndexKind): Type | undefined;
@@ -3321,9 +3334,9 @@ declare namespace ts {
      * @returns The unescaped identifier text.
      */
     function unescapeLeadingUnderscores(identifier: __String): string;
-    function idText(identifierOrPrivateName: Identifier | PrivateName): string;
+    function idText(identifierOrPrivateIdentifier: Identifier | PrivateIdentifier): string;
     function symbolName(symbol: Symbol): string;
-    function getNameOfJSDocTypedef(declaration: JSDocTypedefTag): Identifier | PrivateName | undefined;
+    function getNameOfJSDocTypedef(declaration: JSDocTypedefTag): Identifier | PrivateIdentifier | undefined;
     function getNameOfDeclaration(declaration: Declaration | Expression): DeclarationName | undefined;
     /**
      * Gets the JSDoc parameter tags for the node if present.
@@ -3411,10 +3424,10 @@ declare namespace ts {
     function isTemplateMiddle(node: Node): node is TemplateMiddle;
     function isTemplateTail(node: Node): node is TemplateTail;
     function isIdentifier(node: Node): node is Identifier;
-    function isIdentifierOrPrivateName(node: Node): node is Identifier | PrivateName;
+    function isIdentifierOrPrivateIdentifier(node: Node): node is Identifier | PrivateIdentifier;
     function isQualifiedName(node: Node): node is QualifiedName;
     function isComputedPropertyName(node: Node): node is ComputedPropertyName;
-    function isPrivateName(node: Node): node is PrivateName;
+    function isPrivateIdentifier(node: Node): node is PrivateIdentifier;
     function isTypeParameterDeclaration(node: Node): node is TypeParameterDeclaration;
     function isParameter(node: Node): node is ParameterDeclaration;
     function isDecorator(node: Node): node is Decorator;
@@ -3804,6 +3817,7 @@ declare namespace ts {
     function createFileLevelUniqueName(text: string): Identifier;
     /** Create a unique name generated for a node. */
     function getGeneratedNameForNode(node: Node | undefined): Identifier;
+    function createPrivateIdentifier(text: string): PrivateIdentifier;
     function createToken<TKind extends SyntaxKind>(token: TKind): Token<TKind>;
     function createSuper(): SuperExpression;
     function createThis(): ThisExpression & Token<SyntaxKind.ThisKeyword>;
@@ -3904,9 +3918,14 @@ declare namespace ts {
     function updateArrayLiteral(node: ArrayLiteralExpression, elements: ReadonlyArray<Expression>): ArrayLiteralExpression;
     function createObjectLiteral(properties?: ReadonlyArray<ObjectLiteralElementLike>, multiLine?: boolean): ObjectLiteralExpression;
     function updateObjectLiteral(node: ObjectLiteralExpression, properties: ReadonlyArray<ObjectLiteralElementLike>): ObjectLiteralExpression;
+<<<<<<< HEAD
     function createPropertyAccess(expression: Expression, name: string | Identifier | PrivateName): PropertyAccessExpression;
     function updatePropertyAccess(node: PropertyAccessExpression, expression: Expression, name: Identifier | PrivateName): PropertyAccessExpression;
 >>>>>>> 27319557f8... Parse Private Names
+=======
+    function createPropertyAccess(expression: Expression, name: string | Identifier | PrivateIdentifier): PropertyAccessExpression;
+    function updatePropertyAccess(node: PropertyAccessExpression, expression: Expression, name: Identifier | PrivateIdentifier): PropertyAccessExpression;
+>>>>>>> 16a424927c... Incorporate PR feedback
     function createElementAccess(expression: Expression, index: number | Expression): ElementAccessExpression;
     function updateElementAccess(node: ElementAccessExpression, expression: Expression, argumentExpression: Expression): ElementAccessExpression;
     function createCall(expression: Expression, typeArguments: readonly TypeNode[] | undefined, argumentsArray: readonly Expression[] | undefined): CallExpression;
@@ -4800,7 +4819,7 @@ declare namespace ts {
     interface Identifier {
         readonly text: string;
     }
-    interface PrivateName {
+    interface PrivateIdentifier {
         readonly text: string;
     }
     interface Symbol {
