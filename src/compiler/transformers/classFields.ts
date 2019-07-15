@@ -306,11 +306,11 @@ namespace ts {
             return visitEachChild(node, visitor, context);
         }
 
-        interface PrivateNameAssignmentExpression extends AssignmentExpression<AssignmentOperatorToken> {
+        interface PrivateIdentifierAssignmentExpression extends AssignmentExpression<AssignmentOperatorToken> {
             left: PrivateIdentifierPropertyAccessExpression;
         }
 
-        function isPrivateNameAssignmentExpression(node: Node): node is PrivateNameAssignmentExpression {
+        function isPrivateIdentifierAssignmentExpression(node: Node): node is PrivateIdentifierAssignmentExpression {
             return isAssignmentExpression(node) && isPrivateIdentifierPropertyAccessExpression(node.left);
         }
 
@@ -321,7 +321,7 @@ namespace ts {
                     return updateBinary(node, left, visitNode(node.right, visitor), node.operatorToken);
                 }
             }
-            else if (isPrivateNameAssignmentExpression(node)) {
+            else if (isPrivateIdentifierAssignmentExpression(node)) {
                 const privateIdentifierInfo = accessPrivateIdentifier(node.left.name);
                 if (privateIdentifierInfo) {
                     switch (privateIdentifierInfo.placement) {
@@ -334,7 +334,7 @@ namespace ts {
             return visitEachChild(node, visitor, context);
         }
 
-        function transformPrivateIdentifierInstanceFieldAssignment(privateIdentifierInfo: PrivateIdentifierInstanceField, node: PrivateNameAssignmentExpression) {
+        function transformPrivateIdentifierInstanceFieldAssignment(privateIdentifierInfo: PrivateIdentifierInstanceField, node: PrivateIdentifierAssignmentExpression) {
             if (isCompoundAssignment(node.operatorToken.kind)) {
                 const isReceiverInlineable = isSimpleInlineableExpression(node.left.expression);
                 const getReceiver = isReceiverInlineable ? node.left.expression : createTempVariable(hoistVariableDeclaration);

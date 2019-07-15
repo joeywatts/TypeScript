@@ -3934,17 +3934,14 @@ namespace ts {
         }
     }
 
-    /**
-     * accessor declaration that can be converted to an expression (`name` field cannot be a `PrivateIdentifier`)
-     */
-    type ExpressionableAccessorDeclaration = AccessorDeclaration & {name: Exclude<PropertyName, PrivateIdentifier>};
-
     export function createExpressionForObjectLiteralElementLike(node: ObjectLiteralExpression, property: ObjectLiteralElementLike, receiver: Expression): Expression | undefined {
+        if (property.name && isPrivateIdentifier(property.name)) {
+            Debug.failBadSyntaxKind(property.name, "Private identifiers are not allowed in object literals.");
+        }
         switch (property.kind) {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.SetAccessor:
-                // type assertion `as ExpressionableAccessorDeclaration` is safe because PrivateIdentifiers are not allowed in object literals
-                return createExpressionForAccessorDeclaration(node.properties, property as ExpressionableAccessorDeclaration, receiver, !!node.multiLine);
+                return createExpressionForAccessorDeclaration(node.properties, property as AccessorDeclaration & { name: Exclude<PropertyName, PrivateIdentifier>; }, receiver, !!node.multiLine);
             case SyntaxKind.PropertyAssignment:
                 return createExpressionForPropertyAssignment(property, receiver);
             case SyntaxKind.ShorthandPropertyAssignment:
@@ -3954,7 +3951,7 @@ namespace ts {
         }
     }
 
-    function createExpressionForAccessorDeclaration(properties: NodeArray<Declaration>, property: ExpressionableAccessorDeclaration, receiver: Expression, multiLine: boolean) {
+    function createExpressionForAccessorDeclaration(properties: NodeArray<Declaration>, property: AccessorDeclaration & { name: Exclude<PropertyName, PrivateIdentifier>; }, receiver: Expression, multiLine: boolean) {
         const { firstAccessor, getAccessor, setAccessor } = getAllAccessorDeclarations(properties, property);
         if (property === firstAccessor) {
             const properties: ObjectLiteralElementLike[] = [];
@@ -5111,7 +5108,7 @@ namespace ts {
     /**
      * Gets the property name of a BindingOrAssignmentElement
      */
-    export function getPropertyNameOfBindingOrAssignmentElement(bindingElement: BindingOrAssignmentElement): PropertyName | undefined {
+    export function getPropertyNameOfBindingOrAssignmentElement(bindingElement: BindingOrAssignmentElement): Exclude<PropertyName, PrivateIdentifier> | undefined {
         switch (bindingElement.kind) {
             case SyntaxKind.BindingElement:
                 // `a` in `let { a: b } = ...`
@@ -5120,6 +5117,9 @@ namespace ts {
                 // `1` in `let { 1: b } = ...`
                 if (bindingElement.propertyName) {
                     const propertyName = bindingElement.propertyName;
+                    if (isPrivateIdentifier(propertyName)) {
+                        return Debug.failBadSyntaxKind(propertyName);
+                    }
                     return isComputedPropertyName(propertyName) && isStringOrNumericLiteral(propertyName.expression)
                         ? propertyName.expression
                         : propertyName;
@@ -5134,6 +5134,9 @@ namespace ts {
                 // `1` in `({ 1: b } = ...)`
                 if (bindingElement.name) {
                     const propertyName = bindingElement.name;
+                    if (isPrivateIdentifier(propertyName)) {
+                        return Debug.failBadSyntaxKind(propertyName);
+                    }
                     return isComputedPropertyName(propertyName) && isStringOrNumericLiteral(propertyName.expression)
                         ? propertyName.expression
                         : propertyName;
@@ -5143,6 +5146,9 @@ namespace ts {
 
             case SyntaxKind.SpreadAssignment:
                 // `a` in `({ ...a } = ...)`
+                if (bindingElement.name && isPrivateIdentifier(bindingElement.name)) {
+                    return Debug.failBadSyntaxKind(bindingElement.name);
+                }
                 return bindingElement.name;
         }
 
