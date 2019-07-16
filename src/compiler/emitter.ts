@@ -1452,10 +1452,6 @@ namespace ts {
                     case SyntaxKind.Identifier:
                         return emitIdentifier(<Identifier>node);
 
-                    // Private Names
-                    case SyntaxKind.PrivateIdentifier:
-                        return emitPrivateIdentifier(node as PrivateIdentifier);
-
                     // Reserved words
                     case SyntaxKind.FalseKeyword:
                     case SyntaxKind.NullKeyword:
