@@ -29,7 +29,7 @@ new A().method();
 
 //// [privateNamesInNestedClasses-1.js]
 // @target es6
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _foo, _bar;
 "use strict";
 var A = /** @class */ (function () {
@@ -44,13 +44,13 @@ var A = /** @class */ (function () {
                 _foo_1.set(this, "B's #foo");
             }
             B.prototype.bar = function (a) {
-                _classPrivateFieldGet(a, _foo_1); // OK, no compile-time error, don't know what `a` is
+                __classPrivateFieldGet(a, _foo_1); // OK, no compile-time error, don't know what `a` is
             };
             B.prototype.baz = function (a) {
-                _classPrivateFieldGet(a, _foo_1); // compile-time error, shadowed
+                __classPrivateFieldGet(a, _foo_1); // compile-time error, shadowed
             };
             B.prototype.quux = function (b) {
-                _classPrivateFieldGet(b, _foo_1); // OK
+                __classPrivateFieldGet(b, _foo_1); // OK
             };
             return B;
         }());

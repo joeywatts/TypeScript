@@ -12,7 +12,7 @@ class A {
 
 //// [privateNameAndAny.js]
 // @target es6
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _foo;
 "use strict";
 var A = /** @class */ (function () {
@@ -20,7 +20,7 @@ var A = /** @class */ (function () {
         _foo.set(this, true);
     }
     A.prototype.method = function (thing) {
-        _classPrivateFieldGet(thing, _foo); // OK
+        __classPrivateFieldGet(thing, _foo); // OK
         thing.bar; // OK: we do not (yet) check that #foo is in an ancestor class (but we could)
     };
     return A;

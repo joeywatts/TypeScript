@@ -32,13 +32,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var _classPrivateFieldSet = function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var _foo, _foo_1;
 "use strict";
 var A = /** @class */ (function () {
     function A() {
         _foo.set(this, void 0);
-        _classPrivateFieldSet(this, _foo, 3);
+        __classPrivateFieldSet(this, _foo, 3);
     }
     return A;
 }());
@@ -48,7 +48,7 @@ var B = /** @class */ (function (_super) {
     function B() {
         var _this = _super.call(this) || this;
         _foo_1.set(_this, void 0);
-        _classPrivateFieldSet(_this, _foo_1, "some string");
+        __classPrivateFieldSet(_this, _foo_1, "some string");
         return _this;
     }
     return B;

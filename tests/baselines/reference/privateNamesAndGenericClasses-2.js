@@ -28,24 +28,24 @@ b = a;                                    // Error
 
 
 //// [privateNamesAndGenericClasses-2.js]
-var _classPrivateFieldSet = function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _foo;
 "use strict";
 class C {
     constructor(t) {
         _foo.set(this, void 0);
-        _classPrivateFieldSet(this, _foo, t);
+        __classPrivateFieldSet(this, _foo, t);
         t = this.bar.call(this);
     }
     bar() {
-        return _classPrivateFieldGet(this, _foo);
+        return __classPrivateFieldGet(this, _foo);
     }
     set baz(t) {
-        _classPrivateFieldSet(this, _foo, t);
+        __classPrivateFieldSet(this, _foo, t);
     }
     get baz() {
-        return _classPrivateFieldGet(this, _foo);
+        return __classPrivateFieldGet(this, _foo);
     }
 }
 _foo = new WeakMap();

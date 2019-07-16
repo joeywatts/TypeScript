@@ -33,8 +33,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
-var _classPrivateFieldSet = function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var _x, _x_1;
 exports.__esModule = true;
 var Parent = /** @class */ (function () {
@@ -42,7 +42,7 @@ var Parent = /** @class */ (function () {
         _x.set(this, void 0);
     }
     Parent.prototype.copy = function (child) {
-        _classPrivateFieldSet(this, _x, _classPrivateFieldGet(child, _x)); // OK (Sub has Super's #x)
+        __classPrivateFieldSet(this, _x, __classPrivateFieldGet(child, _x)); // OK (Sub has Super's #x)
     };
     return Parent;
 }());

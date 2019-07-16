@@ -11,16 +11,17 @@ class A {
 
 
 //// [privateNameFieldCallExpression.js]
-var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
+var __setPrivateFunctionNameHelper = (this && this.__setPrivateFunctionNameHelper) || function (name, func) { Object.defineProperty(func, "name", { value: name }); return func; };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _fieldFunc;
 var A = /** @class */ (function () {
     function A() {
-        _fieldFunc.set(this, function () { this.x = 10; });
+        _fieldFunc.set(this, __setPrivateFunctionNameHelper("#fieldFunc", function () { this.x = 10; }));
         this.x = 1;
     }
     A.prototype.test = function () {
-        _classPrivateFieldGet(this, _fieldFunc).call(this);
-        var func = _classPrivateFieldGet(this, _fieldFunc);
+        __classPrivateFieldGet(this, _fieldFunc).call(this);
+        var func = __classPrivateFieldGet(this, _fieldFunc);
         func();
     };
     return A;

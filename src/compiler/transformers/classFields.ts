@@ -670,9 +670,14 @@ namespace ts {
             const propertyName = isComputedPropertyName(property.name) && !isSimpleInlineableExpression(property.name.expression)
                 ? updateComputedPropertyName(property.name, getGeneratedNameForNode(property.name))
                 : property.name;
-            const initializer = visitNode(property.initializer, visitor, isExpression);
+            let initializer = visitNode(property.initializer, visitor, isExpression);
 
             if (isPrivateIdentifier(propertyName)) {
+                // Assign function name for private identifier property.
+                if (initializer && (isFunctionExpression(initializer) || isArrowFunction(initializer))) {
+                    initializer = createSetPrivateFunctionNameHelper(context, propertyName, initializer);
+                }
+
                 const privateIdentifierInfo = accessPrivateIdentifier(propertyName);
                 if (privateIdentifierInfo) {
                     switch (privateIdentifierInfo.placement) {
@@ -907,25 +912,39 @@ namespace ts {
         );
     }
 
-    const classPrivateFieldGetHelper: EmitHelper = {
+    export const classPrivateFieldGetHelper: UnscopedEmitHelper = {
         name: "typescript:classPrivateFieldGet",
         scoped: false,
-        text: `var _classPrivateFieldGet = function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };`
+        text: `var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };`
     };
 
     function createClassPrivateFieldGetHelper(context: TransformationContext, receiver: Expression, privateField: Identifier) {
         context.requestEmitHelper(classPrivateFieldGetHelper);
-        return createCall(getHelperName("_classPrivateFieldGet"), /* typeArguments */ undefined, [receiver, privateField]);
+        return createCall(getHelperName("__classPrivateFieldGet"), /* typeArguments */ undefined, [receiver, privateField]);
     }
 
-    const classPrivateFieldSetHelper: EmitHelper = {
+    export const classPrivateFieldSetHelper: UnscopedEmitHelper = {
         name: "typescript:classPrivateFieldSet",
         scoped: false,
-        text: `var _classPrivateFieldSet = function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };`
+        text: `var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };`
     };
 
     function createClassPrivateFieldSetHelper(context: TransformationContext, receiver: Expression, privateField: Identifier, value: Expression) {
         context.requestEmitHelper(classPrivateFieldSetHelper);
-        return createCall(getHelperName("_classPrivateFieldSet"), /* typeArguments */ undefined, [receiver, privateField, value]);
+        return createCall(getHelperName("__classPrivateFieldSet"), /* typeArguments */ undefined, [receiver, privateField, value]);
+    }
+
+    export const setPrivateFunctionNameHelper: UnscopedEmitHelper = {
+        name: "typescript:setPrivateFunctionNameHelper",
+        scoped: false,
+        text: `var __setPrivateFunctionNameHelper = (this && this.__setPrivateFunctionNameHelper) || function (name, func) { Object.defineProperty(func, "name", { value: name }); return func; };`
+    };
+
+    function createSetPrivateFunctionNameHelper(context: TransformationContext, name: PrivateIdentifier, func: Expression) {
+        context.requestEmitHelper(setPrivateFunctionNameHelper);
+        return createCall(getHelperName("__setPrivateFunctionNameHelper"), /* typeArguments */ undefined, [
+            createStringLiteral(idText(name)),
+            func
+        ]);
     }
 }

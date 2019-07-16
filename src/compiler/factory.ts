@@ -2686,7 +2686,10 @@ namespace ts {
             templateObjectHelper,
             generatorHelper,
             importStarHelper,
-            importDefaultHelper
+            importDefaultHelper,
+            classPrivateFieldGetHelper,
+            classPrivateFieldSetHelper,
+            setPrivateFunctionNameHelper
         ], helper => helper.name));
     }
 
