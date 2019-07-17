@@ -2,7 +2,7 @@
 class A {
 >A : A
 
-    #foo = this.#bar;
+    #foo = this.#bar; // Error
 >#foo : number
 >this.#bar : number
 >this : this
@@ -15,7 +15,7 @@ class A {
 class B {
 >B : B
 
-    #foo = this.#bar;
+    #foo = this.#bar; // Error
 >#foo : any
 >this.#bar : any
 >this : this
@@ -25,4 +25,3 @@ class B {
 >this.#foo : any
 >this : this
 }
-

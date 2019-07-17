@@ -1,9 +1,9 @@
 class A {
-    #foo = this.#bar;
+    #foo = this.#bar; // Error
     #bar = 3;
 }
 
 class B {
-    #foo = this.#bar;
+    #foo = this.#bar; // Error
     #bar = this.#foo;
 }

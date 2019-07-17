@@ -4,7 +4,7 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts
 
 ==== tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts (2 errors) ====
     class A {
-        #foo = this.#bar;
+        #foo = this.#bar; // Error
                     ~~~~
 !!! error TS2729: Property '#bar' is used before its initialization.
 !!! related TS2728 tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts:3:5: '#bar' is declared here.
@@ -12,10 +12,9 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts
     }
     
     class B {
-        #foo = this.#bar;
+        #foo = this.#bar; // Error
                     ~~~~
 !!! error TS2729: Property '#bar' is used before its initialization.
 !!! related TS2728 tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts:8:5: '#bar' is declared here.
         #bar = this.#foo;
     }
-    
