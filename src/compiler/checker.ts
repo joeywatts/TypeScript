@@ -20325,7 +20325,7 @@ namespace ts {
             // check to see if private name is shadowed
             let nearestMatch: Node | undefined;
             const nearestMatchContainingClass = findAncestor(right, node => {
-                if (!node.symbol) {
+                if (!node.symbol || !isClassLike(node)) {
                     return false;
                 }
                 const key = getPropertyNameForPrivateNameDescription(node.symbol, privateNameDescription);
@@ -25036,17 +25036,14 @@ namespace ts {
                 }
                 else {
                     const isStatic = hasModifier(member, ModifierFlags.Static);
-                    let names;
                     const name = member.name;
                     if (!name) {
                         return;
                     }
-                    if (isPrivateIdentifier(name)) {
-                        names = privateIdentifiers;
-                    }
-                    else {
-                        names = isStatic ? staticNames : instanceNames;
-                    }
+                    const names =
+                        isPrivateIdentifier(name) ? privateIdentifiers :
+                        isStatic ? staticNames :
+                        instanceNames;
                     const memberName = name && getPropertyNameForPropertyNameNode(name);
                     if (memberName) {
                         switch (member.kind) {
