@@ -24,3 +24,4 @@ class B {
 >this.#foo : Symbol(B.#foo, Decl(privateNamesUseBeforeDef.ts, 5, 9))
 >this : Symbol(B, Decl(privateNamesUseBeforeDef.ts, 3, 1))
 }
+

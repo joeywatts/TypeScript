@@ -25,3 +25,4 @@ class B {
 >this.#foo : any
 >this : this
 }
+

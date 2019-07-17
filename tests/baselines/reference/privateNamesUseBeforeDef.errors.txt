@@ -18,3 +18,4 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts
 !!! related TS2728 tests/cases/conformance/classes/members/privateNames/privateNamesUseBeforeDef.ts:8:5: '#bar' is declared here.
         #bar = this.#foo;
     }
+    
