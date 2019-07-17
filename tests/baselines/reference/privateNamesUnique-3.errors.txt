@@ -6,7 +6,7 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUnique-3.ts(4,2
     class Parent {
         #x;
         copy(child: Child) {
-            this.#x = child.#x; // OK (Sub has Super's #x)
+            this.#x = child.#x; // Error: because private names are lexically scoped
                             ~~
 !!! error TS2339: Property '#x' does not exist on type 'Child'.
                             ~~
@@ -17,7 +17,7 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUnique-3.ts(4,2
     }
     
     class Child extends Parent {
-        #x; // OK (Child #x lexically shadows Super's #x)
+        #x; // OK (Child's #x does not conflict, as paren't #x is not accessible)
     }
     
     const parent = new Parent();

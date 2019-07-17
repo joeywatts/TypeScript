@@ -2,12 +2,12 @@
 class Parent {
     #x;
     copy(child: Child) {
-        this.#x = child.#x; // OK (Sub has Super's #x)
+        this.#x = child.#x; // Error: because private names are lexically scoped
     }
 }
 
 class Child extends Parent {
-    #x; // OK (Child #x lexically shadows Super's #x)
+    #x; // OK (Child's #x does not conflict, as paren't #x is not accessible)
 }
 
 const parent = new Parent();
@@ -42,7 +42,7 @@ var Parent = /** @class */ (function () {
         _x.set(this, void 0);
     }
     Parent.prototype.copy = function (child) {
-        __classPrivateFieldSet(this, _x, __classPrivateFieldGet(child, _x)); // OK (Sub has Super's #x)
+        __classPrivateFieldSet(this, _x, __classPrivateFieldGet(child, _x)); // Error: because private names are lexically scoped
     };
     return Parent;
 }());
@@ -51,7 +51,7 @@ var Child = /** @class */ (function (_super) {
     __extends(Child, _super);
     function Child() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _x_1.set(_this, void 0); // OK (Child #x lexically shadows Super's #x)
+        _x_1.set(_this, void 0); // OK (Child's #x does not conflict, as paren't #x is not accessible)
         return _this;
     }
     return Child;

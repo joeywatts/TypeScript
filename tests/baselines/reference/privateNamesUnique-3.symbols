@@ -10,7 +10,7 @@ class Parent {
 >child : Symbol(child, Decl(privateNamesUnique-3.ts, 2, 9))
 >Child : Symbol(Child, Decl(privateNamesUnique-3.ts, 5, 1))
 
-        this.#x = child.#x; // OK (Sub has Super's #x)
+        this.#x = child.#x; // Error: because private names are lexically scoped
 >this.#x : Symbol(Parent.#x, Decl(privateNamesUnique-3.ts, 0, 14))
 >this : Symbol(Parent, Decl(privateNamesUnique-3.ts, 0, 0))
 >child : Symbol(child, Decl(privateNamesUnique-3.ts, 2, 9))
@@ -21,7 +21,7 @@ class Child extends Parent {
 >Child : Symbol(Child, Decl(privateNamesUnique-3.ts, 5, 1))
 >Parent : Symbol(Parent, Decl(privateNamesUnique-3.ts, 0, 0))
 
-    #x; // OK (Child #x lexically shadows Super's #x)
+    #x; // OK (Child's #x does not conflict, as paren't #x is not accessible)
 >#x : Symbol(Child.#x, Decl(privateNamesUnique-3.ts, 7, 28))
 }
 

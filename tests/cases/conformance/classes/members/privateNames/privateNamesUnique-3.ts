@@ -1,12 +1,12 @@
 class Parent {
     #x;
     copy(child: Child) {
-        this.#x = child.#x; // OK (Sub has Super's #x)
+        this.#x = child.#x; // Error: because private names are lexically scoped
     }
 }
 
 class Child extends Parent {
-    #x; // OK (Child #x lexically shadows Super's #x)
+    #x; // OK (Child's #x does not conflict, as paren't #x is not accessible)
 }
 
 const parent = new Parent();
