@@ -1644,7 +1644,7 @@ namespace ts {
 
             const visitedAccessorName = visitNode(firstAccessor.name, visitor, isPropertyName);
             if (isPrivateIdentifier(visitedAccessorName)) {
-                return Debug.failBadSyntaxKind(visitedAccessorName, "Private names are not allowed in ES2015.");
+                return Debug.failBadSyntaxKind(visitedAccessorName, "Encountered unhandled private identifier while transforming ES2015.");
             }
             const propertyName = createExpressionForPropertyName(visitedAccessorName);
             setEmitFlags(propertyName, EmitFlags.NoComments | EmitFlags.NoLeadingSourceMap);
