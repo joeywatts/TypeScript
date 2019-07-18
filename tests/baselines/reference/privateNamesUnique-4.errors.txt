@@ -1,10 +1,13 @@
+tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,5): error TS18019: 'static' modifier cannot be used with a private-named field
 tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,12): error TS2300: Duplicate identifier '#foo'.
 
 
-==== tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts (1 errors) ====
+==== tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts (2 errors) ====
     class A {
         #foo = 1;
         static #foo = true; // error (duplicate)
+        ~~~~~~
+!!! error TS18019: 'static' modifier cannot be used with a private-named field
                ~~~~
 !!! error TS2300: Duplicate identifier '#foo'.
                             // because static and instance private names

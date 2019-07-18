@@ -5058,8 +5058,12 @@
         "category": "Error",
         "code": 18018
     },
-    "A private identifier cannot be assigned to a value of type '{0}'.": {
+    "'{0}' modifier cannot be used with a private-named field": {
         "category": "Error",
         "code": 18019
+    },
+    "A private identifier cannot be assigned to a value of type '{0}'.": {
+        "category": "Error",
+        "code": 18020
     }
 }
