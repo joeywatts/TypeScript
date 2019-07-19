@@ -5057,5 +5057,9 @@
     "The declaration of '{0}' that you probably intended to use is defined here": {
         "category": "Error",
         "code": 18018
+    },
+    "A private identifier cannot be assigned to a value of type '{0}'.": {
+        "category": "Error",
+        "code": 18019
     }
 }

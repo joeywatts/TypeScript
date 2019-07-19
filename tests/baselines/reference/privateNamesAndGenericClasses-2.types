@@ -74,7 +74,7 @@ const x: number = a.baz                   // OK
 >baz : number
 
 a.#foo;                                   // Error
->a.#foo : number
+>a.#foo : any
 >a : C<number>
 
 a = b;                                    // Error

@@ -20310,71 +20310,114 @@ namespace ts {
             const privateNameDescription = right.escapedText;
             const diagName = diagnosticName(right);
 
-            const key = getPropertyNameForPrivateNameDescription(leftType.symbol, privateNameDescription);
-            const prop = getPropertyOfType(leftType, key);
-            if (!prop) {
+            if (!(leftType.symbol.flags & SymbolFlags.Class)) {
+                error(
+                    right,
+                    Diagnostics.A_private_identifier_cannot_be_assigned_to_a_value_of_type_0,
+                    typeToString(leftType)
+                );
                 return undefined;
             }
+            const baseTypes = getBaseTypes(leftType as InterfaceType);
 
-            const containingClass = getContainingClass(right);
-            if (!containingClass) {
-                // Prop is found, but not accessible. We catch and report this error in checkPropertyAccessibility
-                return prop;
-            }
+            // The 'nearest' private-named prop is the one in the closest lexical scope as we search up the AST
+            let nearest: { prop: Symbol, classNode: ClassLikeDeclaration } | undefined;
+            // the 'intended' private-named prop is any private name on the object's class or the class of an ancestor
+            // with the given description. We use this to report a fine-grained error
+            let intended: { prop: Symbol, classNode: ClassLikeDeclaration } | undefined;
 
-            // check to see if private name is shadowed
-            let nearestMatch: Node | undefined;
-            const nearestMatchContainingClass = findAncestor(right, node => {
-                if (!node.symbol || !isClassLike(node)) {
+            // Either the private-named property is found, or it is not found for one of three reasons:
+            // - There's no private identifier with the given description either in scope or on the object
+            // - attempt to access from outside the class that defines the private name ('intended' exists but 'nearest' does not)
+            // - shadowed private name ('intended' and 'nearest' both exist, but are distinct)
+
+            // find 'intended' and 'nearest'
+            findAncestor(right, node => {
+                const { symbol } = node;
+                if (!symbol || !isClassLike(node)) {
                     return false;
                 }
-                const key = getPropertyNameForPrivateNameDescription(node.symbol, privateNameDescription);
-                const instanceSymbol = node.symbol.members && node.symbol.members.get(key);
-                const staticSymbol = node.symbol.exports && node.symbol.exports.get(key);
-                const matchingSymbol = instanceSymbol || staticSymbol;
-                if (matchingSymbol) {
-                    nearestMatch = matchingSymbol.valueDeclaration;
+                const privateName = getPropertyNameForPrivateNameDescription(symbol, privateNameDescription);
+
+                if (!nearest) {
+                    // static and instance PrivateIdentifiers can conflict
+                    const instanceProp = symbol.members && symbol.members.get(privateName);
+                    const staticProp = symbol.exports && symbol.exports.get(privateName);
+                    const matchingProp = instanceProp || staticProp;
+                    if (matchingProp) {
+                        nearest = { prop: matchingProp, classNode: node };
+                    }
                 }
-                return !!matchingSymbol;
+                if (nearest && intended === undefined) {
+                    if (isConstructorType(leftType) && leftType.symbol === symbol) {
+                        const prop = symbol.exports && symbol.exports.get(privateName);
+                        if (prop) {
+                            intended = { prop, classNode: node };
+                        }
+                    }
+                    else {
+                        // special baseTypes handling here.
+                        // private fields of the parent class are added to the child when superclass' constructor is called on the child instance
+                        // (private fields do not participate in inheritance)
+                        const isInstance = leftType.symbol === symbol || baseTypes.some(type => type.symbol === symbol);
+                        if (isInstance) {
+                            const prop = symbol.members && symbol.members.get(privateName);
+                            if (prop) {
+                                intended = { prop, classNode: node };
+                            }
+                        }
+                    }
+                }
+
+                return !!intended;
             });
-            if (!nearestMatch || !nearestMatchContainingClass) {
-                if (errorNode) {
+
+            if (!intended) {
+                const privateName = getPropertyNameForPrivateNameDescription(leftType.symbol, privateNameDescription);
+                const hasMatchingDescription = !!(leftType.symbol.members && leftType.symbol.members.get(privateName));
+                if (hasMatchingDescription) {
+                    // leftType does have a prive name matching the description, but it's not in scope
+                    const { valueDeclaration } = leftType.symbol;
+                    Debug.assert(isClassDeclaration(valueDeclaration));
                     error(
                         right,
                         Diagnostics.Property_0_is_not_accessible_outside_class_1_because_it_is_privately_named,
-                        typeToString(leftType),
-                        diagnosticName(containingClass.name || anon)
+                        diagnosticName(right),
+                        diagnosticName((valueDeclaration as ClassLikeDeclaration).name || anon)
                     );
+
                 }
                 return undefined;
             }
-            const match = nearestMatch;
-            const isShadowed = nearestMatchContainingClass.symbol !== leftType.symbol;
-            if (!isShadowed) {
-                return prop;
+
+            if (!nearest) {
+                return undefined;
             }
 
-            const shadowed = prop.valueDeclaration;
-            const diagnostic = error(
-                errorNode,
-                Diagnostics.The_property_0_cannot_be_accessed_on_type_1_within_this_class_because_it_is_shadowed_by_another_private_identifier_with_the_same_spelling,
-                diagnosticName(right),
-                typeToString(leftType)
-            );
+            if (intended.classNode !== nearest.classNode) {
+                const diagnostic = error(
+                    errorNode,
+                    Diagnostics.The_property_0_cannot_be_accessed_on_type_1_within_this_class_because_it_is_shadowed_by_another_private_identifier_with_the_same_spelling,
+                    diagnosticName(right),
+                    typeToString(leftType)
+                );
 
-            addRelatedInfo(
-                diagnostic,
-                createDiagnosticForNode(
-                    match,
-                    Diagnostics.The_shadowing_declaration_of_0_is_defined_here,
-                    diagName
-                ),
-                createDiagnosticForNode(
-                    shadowed,
-                    Diagnostics.The_declaration_of_0_that_you_probably_intended_to_use_is_defined_here,
-                    diagName
-                )
-            );
+                addRelatedInfo(
+                    diagnostic,
+                    createDiagnosticForNode(
+                        nearest.prop.valueDeclaration,
+                        Diagnostics.The_shadowing_declaration_of_0_is_defined_here,
+                        diagName
+                    ),
+                    createDiagnosticForNode(
+                        intended.prop.valueDeclaration,
+                        Diagnostics.The_declaration_of_0_that_you_probably_intended_to_use_is_defined_here,
+                        diagName
+                    )
+                );
+                return undefined;
+            }
+            return intended.prop;
         }
 
         function checkPropertyAccessExpressionOrQualifiedName(node: PropertyAccessExpression | QualifiedName, left: Expression | QualifiedName, right: Identifier | PrivateIdentifier) {
