@@ -1,0 +1,18 @@
+tests/cases/conformance/classes/members/privateNames/privateNameJsPrototype.js(3,3): error TS18016: Private identifiers are not allowed outside class bodies.
+tests/cases/conformance/classes/members/privateNames/privateNameJsPrototype.js(7,3): error TS18016: Private identifiers are not allowed outside class bodies.
+
+
+==== tests/cases/conformance/classes/members/privateNames/privateNameJsPrototype.js (2 errors) ====
+    function A() { }
+    A.prototype = {
+      #x: 1         // Error
+      ~~
+!!! error TS18016: Private identifiers are not allowed outside class bodies.
+    }
+    class B { }
+    B.prototype = {
+      #y: 2         // Error
+      ~~
+!!! error TS18016: Private identifiers are not allowed outside class bodies.
+    }
+    
