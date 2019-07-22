@@ -25245,6 +25245,10 @@ namespace ts {
             // Grammar checking
             if (!checkGrammarMethod(node)) checkGrammarComputedPropertyName(node.name);
 
+            if (isPrivateIdentifier(node.name)) {
+                error(node, Diagnostics.A_method_cannot_have_a_private_identifier_This_feature_may_be_supported_in_a_future_release);
+            }
+
             // Grammar checking for modifiers is done inside the function checkGrammarFunctionLikeDeclaration
             checkFunctionOrMethodDeclaration(node);
 
@@ -31473,7 +31477,7 @@ namespace ts {
                             return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_be_used_with_1_modifier, "static", "abstract");
                         }
                         else if (isPrivateIdentifierPropertyDeclaration(node)) {
-                            return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_be_used_with_a_private_named_field, "static");
+                            return grammarErrorOnNode(modifier, Diagnostics._0_modifier_cannot_be_used_with_a_private_named_field_This_feature_may_be_supported_in_a_future_release, "static");
                         }
                         flags |= ModifierFlags.Static;
                         lastStatic = modifier;

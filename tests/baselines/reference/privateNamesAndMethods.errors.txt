@@ -1,0 +1,45 @@
+tests/cases/conformance/classes/members/privateNames/privateNamesAndMethods.ts(2,5): error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+tests/cases/conformance/classes/members/privateNames/privateNamesAndMethods.ts(3,11): error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+tests/cases/conformance/classes/members/privateNames/privateNamesAndMethods.ts(4,12): error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+tests/cases/conformance/classes/members/privateNames/privateNamesAndMethods.ts(24,5): error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+
+
+==== tests/cases/conformance/classes/members/privateNames/privateNamesAndMethods.ts (4 errors) ====
+    class A {
+        #foo(a: number) {}
+        ~~~~
+!!! error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+        async #bar(a: number) {}
+              ~~~~
+!!! error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+        async *#baz(a: number) {
+               ~~~~
+!!! error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+            return 3;
+        }
+        #_quux: number;
+        get #quux (): number {
+            return this.#_quux;
+        }
+        set #quux (val: number) {
+            this.#_quux = val; 
+        }
+        constructor () {
+            this.#foo(30);
+            this.#bar(30);
+            this.#baz(30);
+            this.#quux = this.#quux + 1;
+            this.#quux++;
+     }
+    }
+    
+    class B extends A {
+        #foo(a: string) {}
+        ~~~~
+!!! error TS18022: A method cannot have a private identifier. This feature may be supported in a future release.
+        constructor () {
+            super();
+            this.#foo("str");
+        }
+    }
+    

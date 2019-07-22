@@ -1,4 +1,4 @@
-tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,5): error TS18019: 'static' modifier cannot be used with a private-named field
+tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,5): error TS18019: 'static' modifier cannot be used with a private-named field. This feature may be supported in a future release
 tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,12): error TS2300: Duplicate identifier '#foo'.
 
 
@@ -7,7 +7,7 @@ tests/cases/conformance/classes/members/privateNames/privateNamesUnique-4.ts(3,1
         #foo = 1;
         static #foo = true; // error (duplicate)
         ~~~~~~
-!!! error TS18019: 'static' modifier cannot be used with a private-named field
+!!! error TS18019: 'static' modifier cannot be used with a private-named field. This feature may be supported in a future release
                ~~~~
 !!! error TS2300: Duplicate identifier '#foo'.
                             // because static and instance private names
