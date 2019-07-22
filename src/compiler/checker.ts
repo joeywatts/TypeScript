@@ -25358,6 +25358,9 @@ namespace ts {
                 if (node.name.kind === SyntaxKind.ComputedPropertyName) {
                     checkComputedPropertyName(node.name);
                 }
+                if (isPrivateIdentifier(node.name)) {
+                    error(node.name, Diagnostics.An_accessor_cannot_have_a_private_identifier_This_feature_may_be_supported_in_a_future_release);
+                }
                 if (!hasNonBindableDynamicName(node)) {
                     // TypeScript 1.0 spec (April 2014): 8.4.3
                     // Accessors for the same member name must specify the same accessibility.

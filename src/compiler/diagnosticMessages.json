@@ -5069,5 +5069,9 @@
     "A method cannot have a private identifier. This feature may be supported in a future release.": {
         "category": "Error",
         "code": 18022
+    },
+    "An accessor cannot have a private identifier. This feature may be supported in a future release.": {
+        "category": "Error",
+        "code": 18023
     }
 }
