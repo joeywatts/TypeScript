@@ -842,10 +842,10 @@ namespace ts {
                     return getTextOfNode(name);
                 }
                 else {
-                    throw Debug.assertNever(name.name);
+                    return Debug.assertNever(name.name);
                 }
             default:
-                throw Debug.assertNever(name);
+                return Debug.assertNever(name);
         }
     }
 
