@@ -278,54 +278,46 @@ namespace ts {
 
         function visitBinaryExpression(node: BinaryExpression) {
             if (isPrivateIdentifierAssignmentExpression(node)) {
-                const privateIdentifierInfo = accessPrivateIdentifier(node.left.name);
-                if (privateIdentifierInfo) {
-                    switch (privateIdentifierInfo.placement) {
-                        case PrivateIdentifierPlacement.InstanceField: {
-                            return transformPrivateIdentifierInstanceFieldAssignment(privateIdentifierInfo, node);
-                        }
-                    }
+                const info = accessPrivateIdentifier(node.left.name);
+                if (info) {
+                    return setOriginalNode(
+                        createPrivateIdentifierAssignment(info, node.left.expression, node.right, node.operatorToken.kind),
+                        node
+                    );
                 }
             }
             return visitEachChild(node, visitor, context);
         }
 
-        function transformPrivateIdentifierInstanceFieldAssignment(privateIdentifierInfo: PrivateIdentifierInstanceField, node: PrivateIdentifierAssignmentExpression) {
-            if (isCompoundAssignment(node.operatorToken.kind)) {
-                const visitedLeftExpr = visitNode(node.left.expression, visitor, isExpression);
-                const isReceiverInlineable = isSimpleInlineableExpression(visitedLeftExpr);
-                const getReceiver = isReceiverInlineable ? visitedLeftExpr : createTempVariable(hoistVariableDeclaration);
-                const setReceiver = isReceiverInlineable
-                    ? visitedLeftExpr
-                    : createAssignment(getReceiver, node.left.expression);
-                return setOriginalNode(
-                    createClassPrivateFieldSetHelper(
-                        context,
-                        setReceiver,
-                        privateIdentifierInfo.weakMapName,
-                        createBinary(
-                            createClassPrivateFieldGetHelper(
-                                context,
-                                getReceiver,
-                                privateIdentifierInfo.weakMapName
-                            ),
-                            getOperatorForCompoundAssignment(node.operatorToken.kind),
-                            visitNode(node.right, visitor)
-                        )
-                    ),
-                    node
+        function createPrivateIdentifierAssignment(info: PrivateIdentifierInfo, receiver: Expression, right: Expression, operator: AssignmentOperator) {
+            switch (info.placement) {
+                case PrivateIdentifierPlacement.InstanceField: {
+                    return createPrivateIdentifierInstanceFieldAssignment(info, receiver, right, operator);
+                }
+                default: return Debug.fail("Unexpected private identifier placement");
+            }
+        }
+
+        function createPrivateIdentifierInstanceFieldAssignment(info: PrivateIdentifierInstanceField, receiver: Expression, right: Expression, operator: AssignmentOperator) {
+            receiver = visitNode(receiver, visitor, isExpression);
+            right = visitNode(right, visitor, isExpression);
+            if (isCompoundAssignment(operator)) {
+                const isReceiverInlineable = isSimpleInlineableExpression(receiver);
+                const getReceiver = isReceiverInlineable ? receiver : createTempVariable(hoistVariableDeclaration);
+                const setReceiver = isReceiverInlineable ? receiver : createAssignment(getReceiver, receiver);
+                return createClassPrivateFieldSetHelper(
+                    context,
+                    setReceiver,
+                    info.weakMapName,
+                    createBinary(
+                        createClassPrivateFieldGetHelper(context, getReceiver, info.weakMapName),
+                        getOperatorForCompoundAssignment(operator),
+                        right
+                    )
                 );
             }
             else {
-                return setOriginalNode(
-                    createClassPrivateFieldSetHelper(
-                        context,
-                        visitNode(node.left.expression, visitor, isExpression),
-                        privateIdentifierInfo.weakMapName,
-                        visitNode(node.right, visitor, isExpression)
-                    ),
-                    node
-                );
+                return createClassPrivateFieldSetHelper(context, receiver, info.weakMapName, right);
             }
         }
 
@@ -795,6 +787,10 @@ namespace ts {
 
         function wrapPrivateIdentifierForDestructuringTarget(node: PrivateIdentifierPropertyAccessExpression) {
             const parameter = getGeneratedNameForNode(node);
+            const info = accessPrivateIdentifier(node.name);
+            if (!info) {
+                return visitEachChild(node, visitor, context);
+            }
             return createPropertyAccess(
                 createObjectLiteral([
                     createSetAccessor(
@@ -812,7 +808,12 @@ namespace ts {
                         )],
                         createBlock(
                             [createExpressionStatement(
-                                visitNode(createAssignment(node, parameter), visitor)
+                                createPrivateIdentifierAssignment(
+                                    info,
+                                    node.expression,
+                                    parameter,
+                                    SyntaxKind.EqualsToken
+                                )
                             )]
                         )
                     )
