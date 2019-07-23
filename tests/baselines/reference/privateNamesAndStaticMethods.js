@@ -38,21 +38,21 @@ var __quux;
 class A {
     constructor() {
         var _a, _b;
-        A.foo.call(A, 30);
-        A.bar.call(A, 30);
-        A.bar.call(A, 30);
-        A.quux = A.quux + 1;
-        _a = A, _b = _a.quux, _a.quux = _b + 1, _b;
+        A..call(A, 30);
+        A..call(A, 30);
+        A..call(A, 30);
+        A. = A. + 1;
+        _a = A, _b = _a., _a. = _b + 1, _b;
     }
-    static foo(a) { }
-    static async bar(a) { }
-    static async *baz(a) {
+    static (a) { }
+    static async (a) { }
+    static async *(a) {
         return 3;
     }
-    static get quux() {
+    static get () {
         return __classPrivateFieldGet(this, __quux);
     }
-    static set quux(val) {
+    static set (val) {
         __classPrivateFieldSet(this, __quux, val);
     }
 }
@@ -60,7 +60,7 @@ __quux = new WeakMap();
 class B extends A {
     constructor() {
         super();
-        B.foo.call(B, "str");
+        B..call(B, "str");
     }
-    static foo(a) { }
+    static (a) { }
 }

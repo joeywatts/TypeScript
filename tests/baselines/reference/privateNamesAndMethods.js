@@ -38,21 +38,21 @@ class A {
     constructor() {
         var _a;
         __quux.set(this, void 0);
-        this.foo.call(this, 30);
-        this.bar.call(this, 30);
-        this.baz.call(this, 30);
-        this.quux = this.quux + 1;
-        _a = this.quux, this.quux = _a + 1, _a;
+        this..call(this, 30);
+        this..call(this, 30);
+        this..call(this, 30);
+        this. = this. + 1;
+        _a = this., this. = _a + 1, _a;
     }
-    foo(a) { }
-    async bar(a) { }
-    async *baz(a) {
+    (a) { }
+    async (a) { }
+    async *(a) {
         return 3;
     }
-    get quux() {
+    get () {
         return __classPrivateFieldGet(this, __quux);
     }
-    set quux(val) {
+    set (val) {
         __classPrivateFieldSet(this, __quux, val);
     }
 }
@@ -60,7 +60,7 @@ __quux = new WeakMap();
 class B extends A {
     constructor() {
         super();
-        this.foo.call(this, "str");
+        this..call(this, "str");
     }
-    foo(a) { }
+    (a) { }
 }

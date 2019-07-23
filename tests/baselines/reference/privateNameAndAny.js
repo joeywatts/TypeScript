@@ -21,7 +21,7 @@ var A = /** @class */ (function () {
     }
     A.prototype.method = function (thing) {
         __classPrivateFieldGet(thing, _foo); // OK
-        thing.bar; // OK: we do not (yet) check that #foo is in an ancestor class (but we could)
+        thing.; // OK: we do not (yet) check that #foo is in an ancestor class (but we could)
     };
     return A;
 }());
