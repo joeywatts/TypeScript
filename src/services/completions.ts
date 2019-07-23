@@ -1997,9 +1997,7 @@ namespace ts.Completions {
 
         const validIdentifierResult: CompletionEntryDisplayNameForSymbol = { name, needsConvertPropertyAccess: false };
         if (isIdentifierText(name, target)) return validIdentifierResult;
-        if (symbol.valueDeclaration && isNamedDeclaration(symbol.valueDeclaration) && isPrivateIdentifier(symbol.valueDeclaration.name)) {
-            return { name: idText(symbol.valueDeclaration.name), needsConvertPropertyAccess: false };
-        }
+        if (CharacterCodes.hash === name.charCodeAt(0) && isIdentifierText(name.substring(1), target)) return validIdentifierResult;
         switch (kind) {
             case CompletionKind.MemberLike:
                 return undefined;

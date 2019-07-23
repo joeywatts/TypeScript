@@ -230,6 +230,7 @@ namespace ts {
             const nodeConstructors = [
                 objectAllocator.getNodeConstructor(),
                 objectAllocator.getIdentifierConstructor(),
+                objectAllocator.getPrivateIdentifierConstructor(),
                 objectAllocator.getTokenConstructor(),
                 objectAllocator.getSourceFileConstructor()
             ];
