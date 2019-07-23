@@ -2688,8 +2688,7 @@ namespace ts {
             importStarHelper,
             importDefaultHelper,
             classPrivateFieldGetHelper,
-            classPrivateFieldSetHelper,
-            setPrivateFunctionNameHelper
+            classPrivateFieldSetHelper
         ], helper => helper.name));
     }
 

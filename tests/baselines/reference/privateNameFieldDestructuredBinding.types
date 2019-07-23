@@ -52,6 +52,24 @@ class A {
 >this.testArray : () => number[]
 >this : this
 >testArray : () => number[]
+
+        ({ a: this.#field, b: [this.#field] } = { a: 1, b: [2] });
+>({ a: this.#field, b: [this.#field] } = { a: 1, b: [2] }) : { a: number; b: [number]; }
+>{ a: this.#field, b: [this.#field] } = { a: 1, b: [2] } : { a: number; b: [number]; }
+>{ a: this.#field, b: [this.#field] } : { a: number; b: [number]; }
+>a : number
+>this.#field : number
+>this : this
+>b : [number]
+>[this.#field] : [number]
+>this.#field : number
+>this : this
+>{ a: 1, b: [2] } : { a: number; b: [number]; }
+>a : number
+>1 : 1
+>b : [number]
+>[2] : [number]
+>2 : 2
     }
 }
 

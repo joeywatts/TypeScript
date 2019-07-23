@@ -11,12 +11,11 @@ class A {
 
 
 //// [privateNameFieldCallExpression.js]
-var __setPrivateFunctionNameHelper = (this && this.__setPrivateFunctionNameHelper) || function (name, func) { Object.defineProperty(func, "name", { value: name }); return func; };
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _fieldFunc;
 var A = /** @class */ (function () {
     function A() {
-        _fieldFunc.set(this, __setPrivateFunctionNameHelper("#fieldFunc", function () { this.x = 10; }));
+        _fieldFunc.set(this, { "#fieldFunc": function () { this.x = 10; } }["#fieldFunc"]);
         this.x = 1;
     }
     A.prototype.test = function () {

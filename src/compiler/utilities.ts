@@ -6294,6 +6294,11 @@ namespace ts {
         return isPropertyAccessExpression(node) && isPrivateIdentifier(node.name);
     }
 
+    /*@internal*/
+    export function isPrivateIdentifierAssignmentExpression(node: Node): node is PrivateIdentifierAssignmentExpression {
+        return isAssignmentExpression(node) && isPrivateIdentifierPropertyAccessExpression(node.left);
+    }
+
     // Functions
 
     export function isFunctionLike(node: Node): node is SignatureDeclaration {

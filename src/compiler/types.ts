@@ -1787,6 +1787,11 @@ namespace ts {
         name: PrivateIdentifier;
     }
 
+    /*@internal*/
+    export interface PrivateIdentifierAssignmentExpression extends AssignmentExpression<AssignmentOperatorToken> {
+        left: PrivateIdentifierPropertyAccessExpression;
+    }
+
     export interface SuperPropertyAccessExpression extends PropertyAccessExpression {
         expression: SuperExpression;
     }

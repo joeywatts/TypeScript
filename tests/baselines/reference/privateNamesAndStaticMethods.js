@@ -37,12 +37,12 @@ var __quux;
 "use strict";
 class A {
     constructor() {
-        var _a, _b, _c, A_1, _d;
-        (_a = A).foo.call(_a, 30);
-        (_b = A).bar.call(_b, 30);
-        (_c = A).bar.call(_c, 30);
+        var _a, _b;
+        A.foo.call(A, 30);
+        A.bar.call(A, 30);
+        A.bar.call(A, 30);
         A.quux = A.quux + 1;
-        A_1 = A, _d = A_1.quux, A_1.quux = _d + 1, _d;
+        _a = A, _b = _a.quux, _a.quux = _b + 1, _b;
     }
     static foo(a) { }
     static async bar(a) { }
@@ -59,9 +59,8 @@ class A {
 __quux = new WeakMap();
 class B extends A {
     constructor() {
-        var _a;
         super();
-        (_a = B).foo.call(_a, "str");
+        B.foo.call(B, "str");
     }
     static foo(a) { }
 }

@@ -10,5 +10,6 @@ class A {
         let y: number;
         ({ x: this.#field, y } = this.testObject());
         ([this.#field, y] = this.testArray());
+        ({ a: this.#field, b: [this.#field] } = { a: 1, b: [2] });
     }
 }
