@@ -107,10 +107,10 @@ namespace ts {
 
         /**
          * If we visit a private name, this means it is an undeclared private name.
-         * Replace it with an identifier to produce valid syntax.
+         * Replace it with an empty identifier to indicate a problem with the code.
          */
         function visitPrivateIdentifier(node: PrivateIdentifier) {
-            return setOriginalNode(createIdentifier(idText(node).substring(1)), node);
+            return setOriginalNode(createIdentifier(""), node);
         }
 
         /**
