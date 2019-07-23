@@ -1,9 +1,9 @@
 /// <reference path='fourslash.ts' />
 
 //// class A {
-////     [|/*pnDecl*/foo|] = 3;
+////     [|/*pnDecl*/#foo|] = 3;
 ////     constructor() {
-////         this.[|/*pnUse*/foo|]
+////         this.[|/*pnUse*/#foo|]
 ////     }
 //// }
 
