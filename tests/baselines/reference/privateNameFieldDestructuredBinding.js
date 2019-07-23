@@ -12,6 +12,12 @@ class A {
         ({ x: this.#field, y } = this.testObject());
         ([this.#field, y] = this.testArray());
         ({ a: this.#field, b: [this.#field] } = { a: 1, b: [2] });
+        [this.#field, [this.#field]] = [1, [2]];
+        ({ a: this.#field = 1, b: [this.#field = 1] } = { b: [] });
+        [this.#field = 2] = [];
+    }
+    static test(_a: A) {
+        [_a.#field] = [2];
     }
 }
 
@@ -21,18 +27,24 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
 var _field;
 var A = /** @class */ (function () {
     function A() {
-        var _a, _b, _c;
+        var _b, _c, _d, _e, _f, _g, _h, _j;
         _field.set(this, 1);
         var y;
-        (_a = this.testObject(), { set value(x) { __classPrivateFieldSet(this, _field, x); } }.value = _a.x, y = _a.y);
-        (_b = this.testArray(), { set value(x) { __classPrivateFieldSet(this, _field, x); } }.value = _b[0], y = _b[1]);
-        (_c = { a: 1, b: [2] }, { set value(x) { __classPrivateFieldSet(this, _field, x); } }.value = _c.a, { set value(x) { __classPrivateFieldSet(this, _field, x); } }.value = _c.b[0]);
+        (_b = this.testObject(), { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _b.x, y = _b.y);
+        (_c = this.testArray(), { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _c[0], y = _c[1]);
+        (_d = { a: 1, b: [2] }, { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _d.a, { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _d.b[0]);
+        _e = [1, [2]], { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _e[0], { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _e[1][0];
+        (_f = { b: [] }, _g = _f.a, { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _g === void 0 ? 1 : _g, _h = _f.b[0], { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _h === void 0 ? 1 : _h);
+        _j = [][0], { set value(_b) { __classPrivateFieldSet(this, _field, _b); } }.value = _j === void 0 ? 2 : _j;
     }
     A.prototype.testObject = function () {
         return { x: 10, y: 6 };
     };
     A.prototype.testArray = function () {
         return [10, 11];
+    };
+    A.test = function (_a) {
+        ({ set value(_b) { __classPrivateFieldSet(_a, _field, _b); } }.value = [2][0]);
     };
     return A;
 }());

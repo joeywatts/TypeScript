@@ -70,6 +70,59 @@ class A {
 >b : [number]
 >[2] : [number]
 >2 : 2
+
+        [this.#field, [this.#field]] = [1, [2]];
+>[this.#field, [this.#field]] = [1, [2]] : [number, [number]]
+>[this.#field, [this.#field]] : [number, [number]]
+>this.#field : number
+>this : this
+>[this.#field] : [number]
+>this.#field : number
+>this : this
+>[1, [2]] : [number, [number]]
+>1 : 1
+>[2] : [number]
+>2 : 2
+
+        ({ a: this.#field = 1, b: [this.#field = 1] } = { b: [] });
+>({ a: this.#field = 1, b: [this.#field = 1] } = { b: [] }) : { b: [number?]; a?: number; }
+>{ a: this.#field = 1, b: [this.#field = 1] } = { b: [] } : { b: [number?]; a?: number; }
+>{ a: this.#field = 1, b: [this.#field = 1] } : { a?: number; b: [number]; }
+>a : number
+>this.#field = 1 : 1
+>this.#field : number
+>this : this
+>1 : 1
+>b : [number]
+>[this.#field = 1] : [number]
+>this.#field = 1 : 1
+>this.#field : number
+>this : this
+>1 : 1
+>{ b: [] } : { b: [number?]; a?: number; }
+>b : [number?]
+>[] : [number?]
+
+        [this.#field = 2] = [];
+>[this.#field = 2] = [] : [number?]
+>[this.#field = 2] : [number]
+>this.#field = 2 : 2
+>this.#field : number
+>this : this
+>2 : 2
+>[] : [number?]
+    }
+    static test(_a: A) {
+>test : (_a: A) => void
+>_a : A
+
+        [_a.#field] = [2];
+>[_a.#field] = [2] : [number]
+>[_a.#field] : [number]
+>_a.#field : number
+>_a : A
+>[2] : [number]
+>2 : 2
     }
 }
 

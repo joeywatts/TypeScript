@@ -794,6 +794,7 @@ namespace ts {
 
 
         function wrapPrivateIdentifierForDestructuringTarget(node: PrivateIdentifierPropertyAccessExpression) {
+            const parameter = getGeneratedNameForNode(node);
             return createPropertyAccess(
                 createObjectLiteral([
                     createSetAccessor(
@@ -804,17 +805,14 @@ namespace ts {
                             /*decorators*/ undefined,
                             /*modifiers*/ undefined,
                             /*dotDotDotToken*/ undefined,
-                            "x",
+                            parameter,
                             /*questionToken*/ undefined,
                             /*type*/ undefined,
                             /*initializer*/ undefined
                         )],
                         createBlock(
                             [createExpressionStatement(
-                                visitNode(
-                                    createAssignment(node, createIdentifier("x")),
-                                    visitor
-                                )
+                                visitNode(createAssignment(node, parameter), visitor)
                             )]
                         )
                     )
@@ -823,9 +821,24 @@ namespace ts {
             );
         }
 
-        function visitArrayAssignmentTarget(node: Expression) {
-            if (isPrivateIdentifierPropertyAccessExpression(node)) {
-                return wrapPrivateIdentifierForDestructuringTarget(node);
+        function visitArrayAssignmentTarget(node: AssignmentPattern) {
+            const target = getTargetOfBindingOrAssignmentElement(node);
+            if (target && isPrivateIdentifierPropertyAccessExpression(target)) {
+                const wrapped = wrapPrivateIdentifierForDestructuringTarget(target);
+                if (isAssignmentExpression(node)) {
+                    return updateBinary(
+                        node,
+                        wrapped,
+                        visitNode(node.right, visitor, isExpression),
+                        node.operatorToken
+                    );
+                }
+                else if (isSpreadElement(node)) {
+                    return updateSpread(node, wrapped);
+                }
+                else {
+                    return wrapped;
+                }
             }
             return visitNode(node, visitor);
         }
