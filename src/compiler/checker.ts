@@ -20426,6 +20426,9 @@ namespace ts {
             const parentSymbol = getNodeLinks(left).resolvedSymbol;
             const assignmentKind = getAssignmentTargetKind(node);
             const apparentType = getApparentType(assignmentKind !== AssignmentKind.None || isMethodAccessForCall(node) ? getWidenedType(leftType) : leftType);
+            if (isPrivateIdentifier(right)) {
+                checkExternalEmitHelpers(node, ExternalEmitHelpers.ClassPrivateFieldGet);
+            }
             if (isTypeAny(apparentType) || apparentType === silentNeverType) {
                 if (isIdentifier(left) && parentSymbol) {
                     markAliasReferenced(parentSymbol, node);
@@ -23885,6 +23888,9 @@ namespace ts {
                 Diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access;
             if (checkReferenceExpression(target, error)) {
                 checkTypeAssignableToAndOptionallyElaborate(sourceType, targetType, target, target);
+            }
+            if (isPrivateIdentifierPropertyAccessExpression(target)) {
+                checkExternalEmitHelpers(target.parent, ExternalEmitHelpers.ClassPrivateFieldSet);
             }
             return sourceType;
         }
@@ -31376,6 +31382,8 @@ namespace ts {
                 case ExternalEmitHelpers.AsyncValues: return "__asyncValues";
                 case ExternalEmitHelpers.ExportStar: return "__exportStar";
                 case ExternalEmitHelpers.MakeTemplateObject: return "__makeTemplateObject";
+                case ExternalEmitHelpers.ClassPrivateFieldGet: return "__classPrivateFieldGet";
+                case ExternalEmitHelpers.ClassPrivateFieldSet: return "__classPrivateFieldSet";
                 default: return Debug.fail("Unrecognized helper");
             }
         }

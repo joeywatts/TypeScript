@@ -5375,6 +5375,8 @@ namespace ts {
         AsyncValues = 1 << 15,          // __asyncValues (used by ES2017 for..await..of transformation)
         ExportStar = 1 << 16,           // __exportStar (used by CommonJS/AMD/UMD module transformation)
         MakeTemplateObject = 1 << 17,   // __makeTemplateObject (used for constructing template string array objects)
+        ClassPrivateFieldGet = 1 << 18, // __classPrivateFieldGet (used by the class private field transformation)
+        ClassPrivateFieldSet = 1 << 19, // __classPrivateFieldSet (used by the class private field transformation)
         FirstEmitHelper = Extends,
         LastEmitHelper = MakeTemplateObject,
 
