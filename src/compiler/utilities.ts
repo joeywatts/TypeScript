@@ -1960,7 +1960,7 @@ namespace ts {
                     initializer.expression.escapedText === "self" as __String ||
                     initializer.expression.escapedText === "global" as __String)) &&
                     isIdentifier(initializer.name) &&
-                    isSameEntityName(name, initializer.name)
+                    isSameEntityName(name, initializer.name);
         }
         if (isPropertyAccessExpression(name) && isPropertyAccessExpression(initializer)) {
             return name.name.escapedText === initializer.name.escapedText && isSameEntityName(name.expression, initializer.expression);
