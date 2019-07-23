@@ -784,8 +784,9 @@ namespace ts {
         function accessPrivateIdentifier(name: PrivateIdentifier) {
             for (let i = privateIdentifierEnvironmentStack.length - 1; i >= 0; --i) {
                 const env = privateIdentifierEnvironmentStack[i];
-                if (env.has(name.escapedText)) {
-                    return env.get(name.escapedText);
+                const info = env.get(name.escapedText);
+                if (info) {
+                    return info;
                 }
             }
             return undefined;
