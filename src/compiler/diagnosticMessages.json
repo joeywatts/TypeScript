@@ -5073,5 +5073,9 @@
     "An accessor cannot have a private identifier. This feature may be supported in a future release.": {
         "category": "Error",
         "code": 18023
+    },
+    "An enum member cannot have a private identifier.": {
+        "category": "Error",
+        "code": 18024
     }
 }

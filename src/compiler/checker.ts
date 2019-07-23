@@ -28869,6 +28869,7 @@ namespace ts {
             checkCollisionWithRequireExportsInGeneratedCode(node, node.name);
             checkCollisionWithGlobalPromiseInGeneratedCode(node, node.name);
             checkExportsOnMergedDeclarations(node);
+            node.members.forEach(checkEnumMemberName);
 
             computeEnumMemberValues(node);
 
@@ -28913,6 +28914,12 @@ namespace ts {
                         }
                     }
                 });
+            }
+        }
+
+        function checkEnumMemberName(node: EnumMember) {
+            if (isPrivateIdentifier(node.name)) {
+                error(node, Diagnostics.An_enum_member_cannot_have_a_private_identifier);
             }
         }
 

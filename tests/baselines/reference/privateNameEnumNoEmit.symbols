@@ -1,0 +1,8 @@
+=== tests/cases/conformance/classes/members/privateNames/privateNameEnumNoEmit.ts ===
+enum E {
+>E : Symbol(E, Decl(privateNameEnumNoEmit.ts, 0, 0))
+
+    #x     // Error
+>#x : Symbol(E.#x, Decl(privateNameEnumNoEmit.ts, 0, 8))
+}
+
