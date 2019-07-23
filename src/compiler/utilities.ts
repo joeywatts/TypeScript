@@ -838,9 +838,6 @@ namespace ts {
                 if (isIdentifier(name.name)) {
                     return entityNameToString(name.expression) + "." + entityNameToString(name.name);
                 }
-                else if (isPrivateIdentifier(name.name)) {
-                    return getTextOfNode(name);
-                }
                 else {
                     return Debug.assertNever(name.name);
                 }
