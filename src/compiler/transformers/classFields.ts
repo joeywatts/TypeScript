@@ -810,7 +810,7 @@ namespace ts {
             let assignReceiver: Expression | undefined;
             // We cannot copy `this` or `super` into the function because they will be bound
             // differently inside the function.
-            if (isThisIdentifier(node.expression) || isSuperProperty(node) || !isSimpleCopiableExpression(node.expression)) {
+            if (isThisProperty(node) || isSuperProperty(node) || !isSimpleCopiableExpression(node.expression)) {
                 receiver = createTempVariable(hoistVariableDeclaration);
                 (receiver as Identifier).autoGenerateFlags! |= GeneratedIdentifierFlags.ReservedInNestedScopes;
                 assignReceiver = createBinary(receiver, SyntaxKind.EqualsToken, node.expression);
