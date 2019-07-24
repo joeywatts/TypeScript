@@ -96,13 +96,20 @@ namespace ts {
                     return visitCallExpression(node as CallExpression);
                 case SyntaxKind.BinaryExpression:
                     return visitBinaryExpression(node as BinaryExpression);
-                case SyntaxKind.ObjectLiteralExpression:
-                case SyntaxKind.ArrayLiteralExpression:
-                    return visitAssignmentPattern(node as AssignmentPattern);
                 case SyntaxKind.PrivateIdentifier:
                     return visitPrivateIdentifier(node as PrivateIdentifier);
             }
             return visitEachChild(node, visitor, context);
+        }
+
+        function visitorDestructuringTarget(node: Node): VisitResult<Node> {
+            switch (node.kind) {
+                case SyntaxKind.ObjectLiteralExpression:
+                case SyntaxKind.ArrayLiteralExpression:
+                    return visitAssignmentPattern(node as AssignmentPattern);
+                default:
+                    return visitor(node);
+            }
         }
 
         /**
@@ -277,6 +284,14 @@ namespace ts {
         }
 
         function visitBinaryExpression(node: BinaryExpression) {
+            if (isDestructuringAssignment(node)) {
+                return updateBinary(
+                    node,
+                    visitNode(node.left, visitorDestructuringTarget),
+                    visitNode(node.right, visitor),
+                    node.operatorToken
+                );
+            }
             if (isPrivateIdentifierAssignmentExpression(node)) {
                 const info = accessPrivateIdentifier(node.left.name);
                 if (info) {
@@ -841,7 +856,7 @@ namespace ts {
                     return wrapped;
                 }
             }
-            return visitNode(node, visitor);
+            return visitNode(node, visitorDestructuringTarget);
         }
 
         function visitObjectAssignmentTarget(node: ObjectLiteralElementLike) {
@@ -856,6 +871,11 @@ namespace ts {
                         initializer ? createAssignment(wrapped, visitNode(initializer, visitor)) : wrapped,
                     );
                 }
+                return updatePropertyAssignment(
+                    node,
+                    visitNode(node.name, visitor),
+                    visitNode(node.initializer, visitorDestructuringTarget)
+                );
             }
             return visitNode(node, visitor);
         }
