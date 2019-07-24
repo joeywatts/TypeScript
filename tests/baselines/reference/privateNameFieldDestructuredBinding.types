@@ -6,6 +6,11 @@ class A {
 >#field : number
 >1 : 1
 
+    otherObject = new A();
+>otherObject : A
+>new A() : A
+>A : typeof A
+
     testObject() {
 >testObject : () => { x: number; y: number; }
 
@@ -109,6 +114,17 @@ class A {
 >this.#field = 2 : 2
 >this.#field : number
 >this : this
+>2 : 2
+>[] : [number?]
+
+        [this.otherObject.#field = 2] = [];
+>[this.otherObject.#field = 2] = [] : [number?]
+>[this.otherObject.#field = 2] : [number]
+>this.otherObject.#field = 2 : 2
+>this.otherObject.#field : number
+>this.otherObject : A
+>this : this
+>otherObject : A
 >2 : 2
 >[] : [number?]
     }

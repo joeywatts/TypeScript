@@ -806,35 +806,46 @@ namespace ts {
             if (!info) {
                 return visitEachChild(node, visitor, context);
             }
-            return createPropertyAccess(
-                createObjectLiteral([
-                    createSetAccessor(
-                        /*decorators*/ undefined,
-                        /*modifiers*/ undefined,
-                        "value",
-                        [createParameter(
+            let receiver = node.expression;
+            let assignReceiver: Expression | undefined;
+            // We cannot copy `this` or `super` into the function because they will be bound
+            // differently inside the function.
+            if (isThisIdentifier(node.expression) || isSuperProperty(node) || !isSimpleCopiableExpression(node.expression)) {
+                receiver = createTempVariable(hoistVariableDeclaration);
+                (receiver as Identifier).autoGenerateFlags! |= GeneratedIdentifierFlags.ReservedInNestedScopes;
+                assignReceiver = createBinary(receiver, SyntaxKind.EqualsToken, node.expression);
+            }
+            return inlineExpressions(compact<Expression>([
+                assignReceiver,
+                createPropertyAccess(
+                    createObjectLiteral([
+                        createSetAccessor(
                             /*decorators*/ undefined,
                             /*modifiers*/ undefined,
-                            /*dotDotDotToken*/ undefined,
-                            parameter,
-                            /*questionToken*/ undefined,
-                            /*type*/ undefined,
-                            /*initializer*/ undefined
-                        )],
-                        createBlock(
-                            [createExpressionStatement(
-                                createPrivateIdentifierAssignment(
-                                    info,
-                                    node.expression,
-                                    parameter,
-                                    SyntaxKind.EqualsToken
-                                )
-                            )]
+                            "value",
+                            [createParameter(
+                                /*decorators*/ undefined,
+                                /*modifiers*/ undefined,
+                                /*dotDotDotToken*/ undefined,
+                                parameter,
+                                /*questionToken*/ undefined,
+                                /*type*/ undefined,
+                                /*initializer*/ undefined
+                            )],
+                            createBlock(
+                                [createExpressionStatement(
+                                    createPrivateIdentifierAssignment(
+                                        info,
+                                        receiver,
+                                        parameter,
+                                        SyntaxKind.EqualsToken
+                                    )
+                                )]
+                            )
                         )
-                    )
-                ]),
-                "value"
-            );
+                    ]),
+                    "value"
+                )]));
         }
 
         function visitArrayAssignmentTarget(node: AssignmentPattern) {
