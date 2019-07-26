@@ -285,12 +285,19 @@ namespace ts {
 
         function visitBinaryExpression(node: BinaryExpression) {
             if (isDestructuringAssignment(node)) {
-                return updateBinary(
+                const savedPendingExpressions = pendingExpressions;
+                pendingExpressions = undefined!;
+                node = updateBinary(
                     node,
                     visitNode(node.left, visitorDestructuringTarget),
                     visitNode(node.right, visitor),
                     node.operatorToken
                 );
+                const expr = some(pendingExpressions) ?
+                    inlineExpressions(compact([...pendingExpressions!, node])) :
+                    node;
+                pendingExpressions = savedPendingExpressions;
+                return expr;
             }
             if (isPrivateIdentifierAssignmentExpression(node)) {
                 const info = accessPrivateIdentifier(node.left.name);
@@ -807,45 +814,42 @@ namespace ts {
                 return visitEachChild(node, visitor, context);
             }
             let receiver = node.expression;
-            let assignReceiver: Expression | undefined;
             // We cannot copy `this` or `super` into the function because they will be bound
             // differently inside the function.
             if (isThisProperty(node) || isSuperProperty(node) || !isSimpleCopiableExpression(node.expression)) {
                 receiver = createTempVariable(hoistVariableDeclaration);
                 (receiver as Identifier).autoGenerateFlags! |= GeneratedIdentifierFlags.ReservedInNestedScopes;
-                assignReceiver = createBinary(receiver, SyntaxKind.EqualsToken, node.expression);
+                (pendingExpressions || (pendingExpressions = [])).push(createBinary(receiver, SyntaxKind.EqualsToken, node.expression));
             }
-            return inlineExpressions(compact<Expression>([
-                assignReceiver,
-                createPropertyAccess(
-                    createObjectLiteral([
-                        createSetAccessor(
+            return createPropertyAccess(
+                createObjectLiteral([
+                    createSetAccessor(
+                        /*decorators*/ undefined,
+                        /*modifiers*/ undefined,
+                        "value",
+                        [createParameter(
                             /*decorators*/ undefined,
                             /*modifiers*/ undefined,
-                            "value",
-                            [createParameter(
-                                /*decorators*/ undefined,
-                                /*modifiers*/ undefined,
-                                /*dotDotDotToken*/ undefined,
-                                parameter,
-                                /*questionToken*/ undefined,
-                                /*type*/ undefined,
-                                /*initializer*/ undefined
-                            )],
-                            createBlock(
-                                [createExpressionStatement(
-                                    createPrivateIdentifierAssignment(
-                                        info,
-                                        receiver,
-                                        parameter,
-                                        SyntaxKind.EqualsToken
-                                    )
-                                )]
-                            )
+                            /*dotDotDotToken*/ undefined,
+                            parameter,
+                            /*questionToken*/ undefined,
+                            /*type*/ undefined,
+                            /*initializer*/ undefined
+                        )],
+                        createBlock(
+                            [createExpressionStatement(
+                                createPrivateIdentifierAssignment(
+                                    info,
+                                    receiver,
+                                    parameter,
+                                    SyntaxKind.EqualsToken
+                                )
+                            )]
                         )
-                    ]),
-                    "value"
-                )]));
+                    )
+                ]),
+                "value"
+            );
         }
 
         function visitArrayAssignmentTarget(node: AssignmentPattern) {
