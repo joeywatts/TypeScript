@@ -822,32 +822,35 @@ namespace ts {
                 (pendingExpressions || (pendingExpressions = [])).push(createBinary(receiver, SyntaxKind.EqualsToken, node.expression));
             }
             return createPropertyAccess(
-                createObjectLiteral([
-                    createSetAccessor(
-                        /*decorators*/ undefined,
-                        /*modifiers*/ undefined,
-                        "value",
-                        [createParameter(
+                // Explicit parens required because of v8 regression (https://bugs.chromium.org/p/v8/issues/detail?id=9560)
+                createParen(
+                    createObjectLiteral([
+                        createSetAccessor(
                             /*decorators*/ undefined,
                             /*modifiers*/ undefined,
-                            /*dotDotDotToken*/ undefined,
-                            parameter,
-                            /*questionToken*/ undefined,
-                            /*type*/ undefined,
-                            /*initializer*/ undefined
-                        )],
-                        createBlock(
-                            [createExpressionStatement(
-                                createPrivateIdentifierAssignment(
-                                    info,
-                                    receiver,
-                                    parameter,
-                                    SyntaxKind.EqualsToken
-                                )
-                            )]
+                            "value",
+                            [createParameter(
+                                /*decorators*/ undefined,
+                                /*modifiers*/ undefined,
+                                /*dotDotDotToken*/ undefined,
+                                parameter,
+                                /*questionToken*/ undefined,
+                                /*type*/ undefined,
+                                /*initializer*/ undefined
+                            )],
+                            createBlock(
+                                [createExpressionStatement(
+                                    createPrivateIdentifierAssignment(
+                                        info,
+                                        receiver,
+                                        parameter,
+                                        SyntaxKind.EqualsToken
+                                    )
+                                )]
+                            )
                         )
-                    )
-                ]),
+                    ])
+                ),
                 "value"
             );
         }
