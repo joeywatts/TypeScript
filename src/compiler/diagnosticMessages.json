@@ -5081,5 +5081,9 @@
     "A property signature cannot have a private identifier.": {
         "category": "Error",
         "code": 18025
+    },
+    "A hashbang ('!#') can only be used at the start of a file.": {
+        "category": "Error",
+        "code": 18026
     }
 }
