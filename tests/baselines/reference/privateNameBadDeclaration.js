@@ -7,7 +7,11 @@ class B { }
 B.prototype = {
   #y: 2         // Error
 }
-
+class C {
+  constructor() {
+    this.#z = 3;
+  }
+}
 
 //// [privateNameBadDeclaration.js]
 function A() { }
@@ -22,3 +26,9 @@ var B = /** @class */ (function () {
 B.prototype = {
     : 2 // Error
 };
+var C = /** @class */ (function () {
+    function C() {
+        this. = 3;
+    }
+    return C;
+}());
