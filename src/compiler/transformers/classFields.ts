@@ -60,7 +60,8 @@ namespace ts {
          */
         let pendingStatements: Statement[] | undefined;
 
-        const privateIdentifierEnvironmentStack: PrivateIdentifierEnvironment[] = [];
+        const privateIdentifierEnvironmentStack: (PrivateIdentifierEnvironment | undefined)[] = [];
+        let currentPrivateIdentifierEnvironment: PrivateIdentifierEnvironment | undefined;
 
         return chainBundle(transformSourceFile);
 
@@ -767,22 +768,21 @@ namespace ts {
         }
 
         function startPrivateIdentifierEnvironment() {
-            const env: PrivateIdentifierEnvironment = createUnderscoreEscapedMap();
-            privateIdentifierEnvironmentStack.push(env);
-            return env;
+            privateIdentifierEnvironmentStack.push(currentPrivateIdentifierEnvironment);
+            currentPrivateIdentifierEnvironment = undefined;
         }
 
         function endPrivateIdentifierEnvironment() {
-            privateIdentifierEnvironmentStack.pop();
+            currentPrivateIdentifierEnvironment = privateIdentifierEnvironmentStack.pop();
         }
 
         function addPrivateIdentifierToEnvironment(name: PrivateIdentifier) {
-            const env = last(privateIdentifierEnvironmentStack);
             const text = getTextOfPropertyName(name) as string;
             const weakMapName = createOptimisticUniqueName("_" + text.substring(1));
             weakMapName.autoGenerateFlags |= GeneratedIdentifierFlags.ReservedInNestedScopes;
             hoistVariableDeclaration(weakMapName);
-            env.set(name.escapedText, { placement: PrivateIdentifierPlacement.InstanceField, weakMapName });
+            (currentPrivateIdentifierEnvironment || (currentPrivateIdentifierEnvironment = createUnderscoreEscapedMap()))
+                .set(name.escapedText, { placement: PrivateIdentifierPlacement.InstanceField, weakMapName });
             (pendingExpressions || (pendingExpressions = [])).push(
                 createAssignment(
                     weakMapName,
@@ -796,8 +796,17 @@ namespace ts {
         }
 
         function accessPrivateIdentifier(name: PrivateIdentifier) {
+            if (currentPrivateIdentifierEnvironment) {
+                const info = currentPrivateIdentifierEnvironment.get(name.escapedText);
+                if (info) {
+                    return info;
+                }
+            }
             for (let i = privateIdentifierEnvironmentStack.length - 1; i >= 0; --i) {
                 const env = privateIdentifierEnvironmentStack[i];
+                if (!env) {
+                    continue;
+                }
                 const info = env.get(name.escapedText);
                 if (info) {
                     return info;
