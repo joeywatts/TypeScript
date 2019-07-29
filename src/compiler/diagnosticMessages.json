@@ -5077,5 +5077,9 @@
     "An enum member cannot have a private identifier.": {
         "category": "Error",
         "code": 18024
+    },
+    "A property signature cannot have a private identifier.": {
+        "category": "Error",
+        "code": 18025
     }
 }

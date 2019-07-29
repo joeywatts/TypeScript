@@ -25247,6 +25247,13 @@ namespace ts {
             checkVariableLikeDeclaration(node);
         }
 
+        function checkPropertySignature(node: PropertySignature) {
+            if (isPrivateIdentifier(node.name)) {
+                error(node, Diagnostics.A_property_signature_cannot_have_a_private_identifier);
+            }
+            return checkPropertyDeclaration(node);
+        }
+
         function checkMethodDeclaration(node: MethodDeclaration | MethodSignature) {
             // Grammar checking
             if (!checkGrammarMethod(node)) checkGrammarComputedPropertyName(node.name);
@@ -28875,7 +28882,7 @@ namespace ts {
             checkCollisionWithRequireExportsInGeneratedCode(node, node.name);
             checkCollisionWithGlobalPromiseInGeneratedCode(node, node.name);
             checkExportsOnMergedDeclarations(node);
-            node.members.forEach(checkEnumMemberName);
+            node.members.forEach(checkEnumMember);
 
             computeEnumMemberValues(node);
 
@@ -28923,7 +28930,7 @@ namespace ts {
             }
         }
 
-        function checkEnumMemberName(node: EnumMember) {
+        function checkEnumMember(node: EnumMember) {
             if (isPrivateIdentifier(node.name)) {
                 error(node, Diagnostics.An_enum_member_cannot_have_a_private_identifier);
             }
@@ -29460,8 +29467,9 @@ namespace ts {
                 case SyntaxKind.Parameter:
                     return checkParameter(<ParameterDeclaration>node);
                 case SyntaxKind.PropertyDeclaration:
+                    return checkPropertyDeclaration(<PropertyDeclaration>node);
                 case SyntaxKind.PropertySignature:
-                    return checkPropertyDeclaration(<PropertyDeclaration | PropertySignature>node);
+                    return checkPropertySignature(<PropertySignature>node);
                 case SyntaxKind.FunctionType:
                 case SyntaxKind.ConstructorType:
                 case SyntaxKind.CallSignature:
