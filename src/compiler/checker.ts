@@ -1746,7 +1746,7 @@ namespace ts {
         }
 
         function diagnosticName(nameArg: __String | Identifier | PrivateIdentifier) {
-            return isString(nameArg) ? unescapeLeadingUnderscores(nameArg as __String) : declarationNameToString(nameArg as Identifier | PrivateIdentifier);
+            return isString(nameArg) ? unescapeLeadingUnderscores(nameArg as __String) : declarationNameToString(nameArg as Identifier);
         }
 
         function isTypeParameterSymbolDeclaredInContainer(symbol: Symbol, container: Node) {
