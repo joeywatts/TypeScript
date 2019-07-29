@@ -1,8 +1,3 @@
-// @allowJs: true
-// @checkJs: true
-// @noEmit: true
-// @Filename: privaateNameJsBadAssignment.js
-
 exports.#nope = 1;           // Error (outside class body)
 function A() { }
 A.prototype.#no = 2;         // Error (outside class body)
