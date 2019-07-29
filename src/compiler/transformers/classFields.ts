@@ -334,7 +334,7 @@ namespace ts {
                     info.weakMapName,
                     createBinary(
                         createClassPrivateFieldGetHelper(context, getReceiver, info.weakMapName),
-                        getOperatorForCompoundAssignment(operator),
+                        getNonAssignmentOperatorForCompoundAssignment(operator),
                         right
                     )
                 );
