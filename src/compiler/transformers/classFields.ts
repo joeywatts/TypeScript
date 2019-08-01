@@ -300,7 +300,7 @@ namespace ts {
                 pendingExpressions = savedPendingExpressions;
                 return expr;
             }
-            if (isPrivateIdentifierAssignmentExpression(node)) {
+            if (isAssignmentExpression(node) && isPrivateIdentifierPropertyAccessExpression(node.left)) {
                 const info = accessPrivateIdentifier(node.left.name);
                 if (info) {
                     return setOriginalNode(
