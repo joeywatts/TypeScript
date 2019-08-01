@@ -29,19 +29,23 @@ new A().method();
 
 //// [privateNamesInNestedClasses-1.js]
 // @target es6
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _foo, _bar;
 "use strict";
 var A = /** @class */ (function () {
     function A() {
-        _foo.set(this, "A's #foo");
-        _bar.set(this, "A's #bar");
+        _foo.set(this, void 0);
+        __classPrivateFieldSet(this, _foo, "A's #foo");
+        _bar.set(this, void 0);
+        __classPrivateFieldSet(this, _bar, "A's #bar");
     }
     A.prototype.method = function () {
         var _foo_1;
         var B = /** @class */ (function () {
             function B() {
-                _foo_1.set(this, "B's #foo");
+                _foo_1.set(this, void 0);
+                __classPrivateFieldSet(this, _foo_1, "B's #foo");
             }
             B.prototype.bar = function (a) {
                 __classPrivateFieldGet(a, _foo_1); // OK, no compile-time error, don't know what `a` is

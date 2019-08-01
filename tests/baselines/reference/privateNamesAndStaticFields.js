@@ -37,6 +37,7 @@ var _foo, _foo_1;
 "use strict";
 var A = /** @class */ (function () {
     function A() {
+        _foo.set(this, void 0);
         __classPrivateFieldSet(A, _foo, 3);
     }
     return A;
@@ -46,6 +47,7 @@ var B = /** @class */ (function (_super) {
     __extends(B, _super);
     function B() {
         var _this = _super.call(this) || this;
+        _foo_1.set(_this, void 0);
         __classPrivateFieldSet(B, _foo_1, "some string");
         return _this;
     }

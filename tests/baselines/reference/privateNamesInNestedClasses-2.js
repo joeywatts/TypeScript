@@ -21,13 +21,16 @@ class A {
 //// [privateNamesInNestedClasses-2.js]
 "use strict";
 // @target es6
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var A = /** @class */ (function () {
     function A() {
         var _x_1;
+        _x.set(this, void 0);
         var B = /** @class */ (function () {
             function B() {
-                _x_1.set(this, 5);
+                _x_1.set(this, void 0);
+                __classPrivateFieldSet(this, _x_1, 5);
                 var C = /** @class */ (function () {
                     function C() {
                         __classPrivateFieldGet(A, _x_1); // error
@@ -41,6 +44,6 @@ var A = /** @class */ (function () {
     }
     var _x;
     _x = new WeakMap();
-    _x.set(A, 5);
+    A. = 5;
     return A;
 }());

@@ -11,12 +11,14 @@ class A {
 
 //// [privateNamesNoDelete.js]
 // @target es6
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _v;
 "use strict";
 var A = /** @class */ (function () {
     function A() {
-        _v.set(this, 1);
+        _v.set(this, void 0);
+        __classPrivateFieldSet(this, _v, 1);
         delete __classPrivateFieldGet(this, _v); // Error: The operand of a delete operator cannot be a private name.
     }
     return A;

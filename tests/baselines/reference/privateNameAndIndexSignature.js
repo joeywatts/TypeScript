@@ -15,11 +15,13 @@ class A {
 
 //// [privateNameAndIndexSignature.js]
 // @target es6
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var _foo;
 "use strict";
 var A = /** @class */ (function () {
     function A(message) {
-        _foo.set(this, 3);
+        _foo.set(this, void 0);
+        __classPrivateFieldSet(this, _foo, 3);
         this["#bar"] = this["#bar"]; // Error (private identifiers should not prevent circularity checking for computeds)
         this. = 3; // Error (index signatures do not implicitly declare private names)
         this["#foo"] = 3; // Error: property not declared (cannot use index signature to access private name)

@@ -18,13 +18,14 @@ class C {
 
 
 //// [privateNameFieldUnaryMutation.js]
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _test;
 var C = /** @class */ (function () {
     function C() {
         var _a, _b;
-        _test.set(this, 24);
+        _test.set(this, void 0);
+        __classPrivateFieldSet(this, _test, 24);
         _a = __classPrivateFieldGet(this, _test), __classPrivateFieldSet(this, _test, _a + 1), _a;
         _b = __classPrivateFieldGet(this, _test), __classPrivateFieldSet(this, _test, _b - 1), _b;
         __classPrivateFieldSet(this, _test, __classPrivateFieldGet(this, _test) + 1);

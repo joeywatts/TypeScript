@@ -29,11 +29,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return privateMap.get(receiver); };
 var _foo, _bar;
 var Parent = /** @class */ (function () {
     function Parent() {
-        _foo_1.set(this, 3);
+        _foo_1.set(this, void 0);
+        __classPrivateFieldSet(this, _foo_1, 3);
+        _bar_1.set(this, void 0);
     }
     Parent.prototype.accessChildProps = function () {
         __classPrivateFieldGet(new Child(), _foo_1); // OK (`#foo` was added when `Parent`'s constructor was called on `child`)
@@ -42,15 +45,17 @@ var Parent = /** @class */ (function () {
     };
     var _foo_1, _bar_1;
     _foo_1 = new WeakMap(), _bar_1 = new WeakMap();
-    _bar_1.set(Parent, 5);
+    Parent. = 5;
     return Parent;
 }());
 var Child = /** @class */ (function (_super) {
     __extends(Child, _super);
     function Child() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _foo.set(_this, "foo"); // OK (Child's #foo does not conflict, as `Parent`'s `#foo` is not accessible)
-        _bar.set(_this, "bar"); // OK
+        _foo.set(_this, void 0);
+        __classPrivateFieldSet(_this, _foo, "foo"); // OK (Child's #foo does not conflict, as `Parent`'s `#foo` is not accessible)
+        _bar.set(_this, void 0);
+        __classPrivateFieldSet(_this, _bar, "bar"); // OK
         return _this;
     }
     return Child;

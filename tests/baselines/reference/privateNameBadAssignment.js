@@ -29,7 +29,8 @@ var B = /** @class */ (function () {
 B. = 3; // Error (outside class body)
 var C = /** @class */ (function () {
     function C() {
-        _bar.set(this, 6);
+        _bar.set(this, void 0);
+        __classPrivateFieldSet(this, _bar, 6);
         __classPrivateFieldSet(exports, _bar, 6); // Error
         this. = 3; // Error (undeclared)
     }

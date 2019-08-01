@@ -31,7 +31,8 @@ var A = /** @class */ (function () {
     function A() {
         var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         var _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
-        _field.set(this, 1);
+        _field.set(this, void 0);
+        __classPrivateFieldSet(this, _field, 1);
         this.otherObject = new A();
         var y;
         (_o = this, (_b = this.testObject(), ({ set value(_b) { __classPrivateFieldSet(_o, _field, _b); } }).value = _b.x, y = _b.y, _b));

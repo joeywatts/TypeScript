@@ -15,28 +15,27 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _y;
 var Test = /** @class */ (function () {
     function Test() {
-        _y.set(this, 123);
+        _y.set(this, void 0);
+        __classPrivateFieldSet(this, _y, 123);
     }
     Test.something = function (obj) {
-        var _x, _a, _x_1, _b, _c;
-        __classPrivateFieldSet(obj[(new (_a = /** @class */ (function () {
-                function class_1() {
-                    _x.set(this, 1);
-                    this.s = "prop";
-                }
-                return class_1;
-            }()),
-            _x = new WeakMap(),
-            _a)).s], _y, 1);
-        __classPrivateFieldSet(_c = obj[(new (_b = /** @class */ (function () {
-                function class_2() {
-                    _x_1.set(this, 1);
-                    this.s = "prop";
-                }
-                return class_2;
-            }()),
-            _x_1 = new WeakMap(),
-            _b)).s], _y, __classPrivateFieldGet(_c, _y) + 1);
+        var _x, _x_1, _a;
+        __classPrivateFieldSet(obj[(new (_x = new WeakMap(), /** @class */ (function () {
+            function class_1() {
+                _x.set(this, void 0);
+                __classPrivateFieldSet(this, _x, 1);
+                this.s = "prop";
+            }
+            return class_1;
+        }()))).s], _y, 1);
+        __classPrivateFieldSet(_a = obj[(new (_x_1 = new WeakMap(), /** @class */ (function () {
+            function class_2() {
+                _x_1.set(this, void 0);
+                __classPrivateFieldSet(this, _x_1, 1);
+                this.s = "prop";
+            }
+            return class_2;
+        }()))).s], _y, __classPrivateFieldGet(_a, _y) + 1);
     };
     return Test;
 }());

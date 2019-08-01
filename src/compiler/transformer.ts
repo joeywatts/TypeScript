@@ -51,6 +51,7 @@ namespace ts {
         }
 
         if (languageVersion < ScriptTarget.ESNext) {
+            transformers.push(transformPrivateIdentifiers);
             transformers.push(transformESNext);
         }
 

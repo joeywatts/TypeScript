@@ -42,7 +42,8 @@ var _field;
 var A = /** @class */ (function () {
     function A() {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-        _field.set(this, 0);
+        _field.set(this, void 0);
+        __classPrivateFieldSet(this, _field, 0);
         __classPrivateFieldSet(this, _field, 1);
         __classPrivateFieldSet(this, _field, __classPrivateFieldGet(this, _field) + 2);
         __classPrivateFieldSet(this, _field, __classPrivateFieldGet(this, _field) - 3);

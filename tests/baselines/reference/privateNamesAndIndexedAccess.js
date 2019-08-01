@@ -13,12 +13,14 @@ class C {
 
 
 //// [privateNamesAndIndexedAccess.js]
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to set private field on non-instance"); } privateMap.set(receiver, value); return value; };
 var _bar, _bar_1;
 "use strict";
 class C {
     constructor() {
         this.foo = 3;
-        _bar_1.set(this, 3);
+        _bar_1.set(this, void 0);
+        __classPrivateFieldSet(this, _bar_1, 3);
         _bar_1.set(this, void 0);
         // will never use this syntax, already taken:
         this.badAlways = 3; // Error
