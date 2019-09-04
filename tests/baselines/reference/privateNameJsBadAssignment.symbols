@@ -1,33 +1,34 @@
-=== tests/cases/conformance/classes/members/privateNames/privaateNameJsBadAssignment.js ===
+=== tests/cases/conformance/classes/members/privateNames/privateNameJsBadAssignment.js ===
 exports.#nope = 1;           // Error (outside class body)
->exports : Symbol(#nope, Decl(privaateNameJsBadAssignment.js, 0, 0))
+>exports : Symbol(#nope, Decl(privateNameJsBadAssignment.js, 0, 0))
 
 function A() { }
->A : Symbol(A, Decl(privaateNameJsBadAssignment.js, 0, 18))
+>A : Symbol(A, Decl(privateNameJsBadAssignment.js, 0, 18))
 
 A.prototype.#no = 2;         // Error (outside class body)
->A.prototype : Symbol(A.#no, Decl(privaateNameJsBadAssignment.js, 1, 16))
->A : Symbol(A, Decl(privaateNameJsBadAssignment.js, 0, 18))
+>A.prototype : Symbol(A.#no, Decl(privateNameJsBadAssignment.js, 1, 16))
+>A : Symbol(A, Decl(privateNameJsBadAssignment.js, 0, 18))
 >prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
 
 class B {}
->B : Symbol(B, Decl(privaateNameJsBadAssignment.js, 2, 20), Decl(privaateNameJsBadAssignment.js, 4, 10))
+>B : Symbol(B, Decl(privateNameJsBadAssignment.js, 2, 20), Decl(privateNameJsBadAssignment.js, 4, 10))
 
 B.#foo = 3;                  // Error (outside class body)
->B : Symbol(B, Decl(privaateNameJsBadAssignment.js, 2, 20), Decl(privaateNameJsBadAssignment.js, 4, 10))
+>B : Symbol(B, Decl(privateNameJsBadAssignment.js, 2, 20), Decl(privateNameJsBadAssignment.js, 4, 10))
 
 class C {
->C : Symbol(C, Decl(privaateNameJsBadAssignment.js, 5, 11))
+>C : Symbol(C, Decl(privateNameJsBadAssignment.js, 5, 11))
 
     #bar = 6;
->#bar : Symbol(C.#bar, Decl(privaateNameJsBadAssignment.js, 7, 9))
+>#bar : Symbol(C.#bar, Decl(privateNameJsBadAssignment.js, 7, 9))
 
     constructor () {
         exports.#bar = 6;    // Error
->exports : Symbol(#bar, Decl(privaateNameJsBadAssignment.js, 9, 20))
+>exports.#bar : Symbol(C.#bar, Decl(privateNameJsBadAssignment.js, 7, 9))
+>exports : Symbol(#bar, Decl(privateNameJsBadAssignment.js, 9, 20))
 
         this.#foo = 3;       // Error (undeclared)
->this : Symbol(C, Decl(privaateNameJsBadAssignment.js, 5, 11))
+>this : Symbol(C, Decl(privateNameJsBadAssignment.js, 5, 11))
     }
 }
 

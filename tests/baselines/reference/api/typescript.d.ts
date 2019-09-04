@@ -538,17 +538,10 @@ declare namespace ts {
         left: EntityName;
         right: Identifier;
     }
-<<<<<<< HEAD
     export type EntityName = Identifier | QualifiedName;
-    export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateName;
-    export type DeclarationName = Identifier | PrivateName | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
+    export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
+    export type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
     export interface Declaration extends Node {
-=======
-    type EntityName = Identifier | QualifiedName;
-    type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier;
-    type DeclarationName = Identifier | PrivateIdentifier | StringLiteralLike | NumericLiteral | ComputedPropertyName | BindingPattern;
-    interface Declaration extends Node {
->>>>>>> 1b6f80d976... Incorporate PR feedback
         _declarationBrand: any;
     }
     export interface NamedDeclaration extends Declaration {
@@ -562,13 +555,8 @@ declare namespace ts {
         kind: SyntaxKind.ComputedPropertyName;
         expression: Expression;
     }
-<<<<<<< HEAD
-    export interface PrivateName extends PrimaryExpression, Declaration {
-        kind: SyntaxKind.PrivateName;
-=======
-    interface PrivateIdentifier extends Node {
+    export interface PrivateIdentifier extends Node {
         kind: SyntaxKind.PrivateIdentifier;
->>>>>>> 1b6f80d976... Incorporate PR feedback
         escapedText: __String;
     }
     export interface Decorator extends Node {
@@ -1957,7 +1945,7 @@ declare namespace ts {
         getDeclaredTypeOfSymbol(symbol: Symbol): Type;
         getPropertiesOfType(type: Type): Symbol[];
         getPropertyOfType(type: Type, propertyName: string): Symbol | undefined;
-        getPropertyForPrivateIdentifier(leftType: Type, right: PrivateIdentifier, errorNode: Node | undefined): Symbol | undefined;
+        getPrivateIdentifierPropertyOfType(type: Type, propertyName: PrivateIdentifier): Symbol | undefined;
         getIndexInfoOfType(type: Type, kind: IndexKind): IndexInfo | undefined;
         getSignaturesOfType(type: Type, kind: SignatureKind): readonly Signature[];
         getIndexTypeOfType(type: Type, kind: IndexKind): Type | undefined;

@@ -1,7 +1,7 @@
 // @allowJs: true
 // @checkJs: true
 // @noEmit: true
-// @Filename: privaateNameJsBadAssignment.js
+// @Filename: privateNameJsBadAssignment.js
 
 exports.#nope = 1;           // Error (outside class body)
 function A() { }
