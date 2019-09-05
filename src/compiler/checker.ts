@@ -366,7 +366,13 @@ namespace ts {
             getDeclaredTypeOfSymbol,
             getPropertiesOfType,
             getPropertyOfType: (type, name) => getPropertyOfType(type, escapeLeadingUnderscores(name)),
-            getPrivateIdentifierPropertyOfType,
+            getPrivateIdentifierPropertyOfType: (leftType: Type, right: PrivateIdentifier) => {
+                if (!isParseTreeNode(right)) {
+                    return Debug.fail("Cannot get properties using a private identifier that cannot be resolved to a parse-tree node.");
+                }
+                const lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(right);
+                return lexicallyScopedIdentifier ? getPrivateIdentifierPropertyOfType(leftType, lexicallyScopedIdentifier) : undefined;
+            },
             getTypeOfPropertyOfType: (type, name) => getTypeOfPropertyOfType(type, escapeLeadingUnderscores(name)),
             getIndexInfoOfType,
             getSignaturesOfType,
@@ -20782,30 +20788,17 @@ namespace ts {
             }
         }
 
-        function getPrivateIdentifierPropertyOfType(leftType: Type, right: PrivateIdentifier): Symbol | undefined;
-        function getPrivateIdentifierPropertyOfType(leftType: Type, right: PrivateIdentifier, lexicallyScopedIdentifier: Symbol | undefined): Symbol | undefined;
-        function getPrivateIdentifierPropertyOfType(leftType: Type, right: PrivateIdentifier, lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(right)): Symbol | undefined {
-            leftType = getApparentType(leftType);
-            if (!(leftType.flags & TypeFlags.Object)) {
-                return undefined;
-            }
-            const properties = isConstructorType(leftType) ? leftType.symbol.exports : resolveStructuredTypeMembers(leftType as ObjectType).members;
-            if (lexicallyScopedIdentifier && properties && properties.has(lexicallyScopedIdentifier.escapedName)) {
-                return lexicallyScopedIdentifier;
-            }
+        function getPrivateIdentifierPropertyOfType(leftType: Type, lexicallyScopedIdentifier: Symbol): Symbol | undefined {
+            return getPropertyOfType(leftType, lexicallyScopedIdentifier.escapedName);
         }
 
         function checkPrivateIdentifierPropertyAccess(leftType: Type, right: PrivateIdentifier, lexicallyScopedIdentifier: Symbol | undefined): boolean {
-            leftType = getApparentType(leftType);
-            if (!(leftType.flags & TypeFlags.Object)) {
-                return false;
-            }
             // Either the identifier could not be looked up in the lexical scope OR the lexically scoped identifier did not exist on the type.
             // Find a private identifier with the same description on the type.
             let propertyOnType: Symbol | undefined;
-            const properties = isConstructorType(leftType) ? leftType.symbol.exports : resolveStructuredTypeMembers(leftType as ObjectType).members;
+            const properties = getPropertiesOfType(leftType);
             if (properties) {
-                forEachEntry(properties, (symbol: Symbol) => {
+                forEach(properties, (symbol: Symbol) => {
                     const decl = symbol.valueDeclaration;
                     if (decl && isNamedDeclaration(decl) && isPrivateIdentifier(decl.name) && decl.name.escapedText === right.escapedText) {
                         propertyOnType = symbol;
@@ -20882,7 +20875,7 @@ namespace ts {
             let prop: Symbol | undefined;
             if (isPrivateIdentifier(right)) {
                 const lexicallyScopedSymbol = lookupSymbolForPrivateIdentifierDeclaration(right);
-                prop = getPrivateIdentifierPropertyOfType(leftType, right, lexicallyScopedSymbol);
+                prop = lexicallyScopedSymbol ? getPrivateIdentifierPropertyOfType(leftType, lexicallyScopedSymbol) : undefined;
                 // Check for private-identifier-specific shadowing and lexical-scoping errors.
                 if (!prop && checkPrivateIdentifierPropertyAccess(leftType, right, lexicallyScopedSymbol)) {
                     return errorType;
@@ -26522,17 +26515,16 @@ namespace ts {
                     if (subsequentNode.kind === node.kind) {
                         const errorNode: Node = (<FunctionLikeDeclaration>subsequentNode).name || subsequentNode;
                         const subsequentName = (<FunctionLikeDeclaration>subsequentNode).name;
-                        const areBothNamesSame = node.name && subsequentName && (
-                            // Both are private names which are the same.
-                            (isPrivateIdentifier(node.name) && isPrivateIdentifier(subsequentName) && node.name.escapedText === subsequentName.escapedText) ||
+                        if (node.name && subsequentName && (
+                            // both are private identifiers
+                            isPrivateIdentifier(node.name) && isPrivateIdentifier(subsequentName) && node.name.escapedText === subsequentName.escapedText ||
                             // Both are computed property names
                             // TODO: GH#17345: These are methods, so handle computed name case. (`Always allowing computed property names is *not* the correct behavior!)
-                            (isComputedPropertyName(node.name) && isComputedPropertyName(subsequentName)) ||
+                            isComputedPropertyName(node.name) && isComputedPropertyName(subsequentName) ||
                             // Both are literal property names that are the same.
-                            (isPropertyNameLiteral(node.name) && isPropertyNameLiteral(subsequentName) &&
-                                getEscapedTextOfIdentifierOrLiteral(node.name) === getEscapedTextOfIdentifierOrLiteral(subsequentName))
-                        );
-                        if (node.name && subsequentName && areBothNamesSame) {
+                            isPropertyNameLiteral(node.name) && isPropertyNameLiteral(subsequentName) &&
+                            getEscapedTextOfIdentifierOrLiteral(node.name) === getEscapedTextOfIdentifierOrLiteral(subsequentName)
+                        )) {
                             const reportError =
                                 (node.kind === SyntaxKind.MethodDeclaration || node.kind === SyntaxKind.MethodSignature) &&
                                 hasModifier(node, ModifierFlags.Static) !== hasModifier(subsequentNode, ModifierFlags.Static);
@@ -26546,7 +26538,7 @@ namespace ts {
                             }
                             return;
                         }
-                        else if (nodeIsPresent((<FunctionLikeDeclaration>subsequentNode).body)) {
+                        if (nodeIsPresent((<FunctionLikeDeclaration>subsequentNode).body)) {
                             error(errorNode, Diagnostics.Function_implementation_name_must_be_0, declarationNameToString(node.name));
                             return;
                         }
