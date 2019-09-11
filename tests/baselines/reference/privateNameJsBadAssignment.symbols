@@ -23,9 +23,6 @@ class C {
 >#bar : Symbol(C.#bar, Decl(privateNameJsBadAssignment.js, 7, 9))
 
     constructor () {
-        exports.#bar = 6;    // Error
->exports : Symbol(#bar, Decl(privateNameJsBadAssignment.js, 9, 20))
-
         this.#foo = 3;       // Error (undeclared)
 >this : Symbol(C, Decl(privateNameJsBadAssignment.js, 5, 11))
     }

@@ -13,7 +13,6 @@ B.#foo = 3;                  // Error (outside class body)
 class C {
     #bar = 6;
     constructor () {
-        exports.#bar = 6;    // Error
         this.#foo = 3;       // Error (undeclared)
     }
 }

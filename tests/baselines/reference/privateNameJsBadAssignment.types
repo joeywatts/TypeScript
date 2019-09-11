@@ -33,12 +33,6 @@ class C {
 >6 : 6
 
     constructor () {
-        exports.#bar = 6;    // Error
->exports.#bar = 6 : 6
->exports.#bar : any
->exports : typeof import("tests/cases/conformance/classes/members/privateNames/privateNameJsBadAssignment")
->6 : 6
-
         this.#foo = 3;       // Error (undeclared)
 >this.#foo = 3 : 3
 >this.#foo : any
