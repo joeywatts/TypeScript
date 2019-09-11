@@ -21182,7 +21182,14 @@ namespace ts {
         }
 
         function markPropertyAsReferenced(prop: Symbol, nodeForCheckWriteOnly: Node | undefined, isThisAccess: boolean) {
-            if (!prop || !(prop.flags & SymbolFlags.ClassMember) || !prop.valueDeclaration || !hasModifier(prop.valueDeclaration, ModifierFlags.Private)) {
+
+            const valueDeclaration = prop && (prop.flags & SymbolFlags.ClassMember) && prop.valueDeclaration;
+            if (!valueDeclaration) {
+                return;
+            }
+            const hasPrivateModifier = hasModifier(valueDeclaration, ModifierFlags.Private);
+            const hasPrivateIdentifier = isNamedDeclaration(prop.valueDeclaration) && isPrivateIdentifier(prop.valueDeclaration.name);
+            if (!hasPrivateModifier && !hasPrivateIdentifier) {
                 return;
             }
             if (nodeForCheckWriteOnly && isWriteOnlyAccess(nodeForCheckWriteOnly) && !(prop.flags & SymbolFlags.SetAccessor && !(prop.flags & SymbolFlags.GetAccessor))) {
@@ -27549,7 +27556,7 @@ namespace ts {
                             break;
                         }
                         const symbol = getSymbolOfNode(member);
-                        if (!symbol.isReferenced && hasModifier(member, ModifierFlags.Private)) {
+                        if (!symbol.isReferenced && (hasModifier(member, ModifierFlags.Private) || isNamedDeclaration(member) && isPrivateIdentifier(member.name))) {
                             addDiagnostic(member, UnusedKind.Local, createDiagnosticForNode(member.name!, Diagnostics._0_is_declared_but_its_value_is_never_read, symbolToString(symbol)));
                         }
                         break;
