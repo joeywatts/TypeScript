@@ -1,3 +1,11 @@
+// @declaration: true
+
 class A {
-    #name: string;
+    #foo: string;
+    #bar = 6;
+    baz: string;
+    qux = 6;
+    quux(): void {
+
+    }
 }
