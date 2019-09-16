@@ -461,7 +461,7 @@ namespace ts {
             | PropertySignature;
 
         function ensureType(node: HasInferredType, type: TypeNode | undefined, ignorePrivate?: boolean): TypeNode | undefined {
-            if (!ignorePrivate && hasModifier(node, ModifierFlags.Private) || isNamedDeclaration(node) && isPrivateIdentifier(node.name)) {
+            if (!ignorePrivate && hasModifier(node, ModifierFlags.Private)) {
                 // Private nodes emit no types (except private parameter properties, whose parameter types are actually visible)
                 return;
             }
@@ -898,7 +898,7 @@ namespace ts {
                             ensureModifiers(input),
                             input.name,
                             input.questionToken,
-                            ensureType(input, input.type),
+                            !hasModifier(input, ModifierFlags.Private) ? ensureType(input, input.type) : undefined,
                             ensureNoInitializer(input)
                         ));
                     case SyntaxKind.PropertySignature:
@@ -907,7 +907,7 @@ namespace ts {
                             ensureModifiers(input),
                             input.name,
                             input.questionToken,
-                            ensureType(input, input.type),
+                            !hasModifier(input, ModifierFlags.Private) ? ensureType(input, input.type) : undefined,
                             ensureNoInitializer(input)
                         ));
                     case SyntaxKind.MethodSignature: {

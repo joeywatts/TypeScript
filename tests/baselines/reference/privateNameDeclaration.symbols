@@ -1,9 +1,8 @@
 === tests/cases/conformance/classes/members/privateNames/privateNameDeclaration.ts ===
-export class A {
+class A {
 >A : Symbol(A, Decl(privateNameDeclaration.ts, 0, 0))
 
-    // declaration file should not include the type of #name
     #name: string;
->#name : Symbol(A.#name, Decl(privateNameDeclaration.ts, 0, 16))
+>#name : Symbol(A.#name, Decl(privateNameDeclaration.ts, 0, 9))
 }
 
