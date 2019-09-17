@@ -367,10 +367,11 @@ namespace ts {
             getPropertiesOfType,
             getPropertyOfType: (type, name) => getPropertyOfType(type, escapeLeadingUnderscores(name)),
             getPrivateIdentifierPropertyOfType: (leftType: Type, right: PrivateIdentifier) => {
-                if (!isParseTreeNode(right)) {
-                    return Debug.fail("Cannot get properties using a private identifier that cannot be resolved to a parse-tree node.");
+                const parseTreeRight = getParseTreeNode(right, isPrivateIdentifier);
+                if (!parseTreeRight) {
+                    return undefined;
                 }
-                const lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(right);
+                const lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(parseTreeRight);
                 return lexicallyScopedIdentifier ? getPrivateIdentifierPropertyOfType(leftType, lexicallyScopedIdentifier) : undefined;
             },
             getTypeOfPropertyOfType: (type, name) => getTypeOfPropertyOfType(type, escapeLeadingUnderscores(name)),
