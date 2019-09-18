@@ -94,13 +94,17 @@ namespace ts {
                 case SyntaxKind.PrefixUnaryExpression:
                     return visitPrefixUnaryExpression(node as PrefixUnaryExpression);
                 case SyntaxKind.PostfixUnaryExpression:
-                    return visitPostfixUnaryExpression(node as PostfixUnaryExpression);
+                    return visitPostfixUnaryExpression(node as PostfixUnaryExpression, /*valueIsDiscarded*/ false);
                 case SyntaxKind.CallExpression:
                     return visitCallExpression(node as CallExpression);
                 case SyntaxKind.BinaryExpression:
                     return visitBinaryExpression(node as BinaryExpression);
                 case SyntaxKind.PrivateIdentifier:
                     return visitPrivateIdentifier(node as PrivateIdentifier);
+                case SyntaxKind.ExpressionStatement:
+                    return visitExpressionStatement(node as ExpressionStatement);
+                case SyntaxKind.ForStatement:
+                    return visitForStatement(node as ForStatement);
             }
             return visitEachChild(node, visitor, context);
         }
@@ -261,7 +265,7 @@ namespace ts {
             return visitEachChild(node, visitor, context);
         }
 
-        function visitPostfixUnaryExpression(node: PostfixUnaryExpression) {
+        function visitPostfixUnaryExpression(node: PostfixUnaryExpression, valueIsDiscarded: boolean) {
             if (shouldTransformPrivateFields && isPrivateIdentifierPropertyAccessExpression(node.operand)) {
                 const operator = node.operator === SyntaxKind.PlusPlusToken ?
                     SyntaxKind.PlusToken : node.operator === SyntaxKind.MinusMinusToken ?
@@ -271,12 +275,10 @@ namespace ts {
                     const receiver = visitNode(node.operand.expression, visitor, isExpression);
                     const { readExpression, initializeExpression } = createCopiableReceiverExpr(receiver);
 
-                    const isValueDiscarded = isExpressionStatement(node.parent) ||
-                        (isForStatement(node.parent) && node.parent.incrementor === node);
                     const existingValue = createPrefix(SyntaxKind.PlusToken, createPrivateIdentifierAccess(info, readExpression));
 
                     // Create a temporary variable to store the value returned by the expression.
-                    const returnValue = isValueDiscarded ? undefined : createTempVariable(hoistVariableDeclaration);
+                    const returnValue = valueIsDiscarded ? undefined : createTempVariable(hoistVariableDeclaration);
 
                     return setOriginalNode(
                         inlineExpressions(compact<Expression>([
@@ -295,6 +297,26 @@ namespace ts {
                         node
                     );
                 }
+            }
+            return visitEachChild(node, visitor, context);
+        }
+
+        function visitForStatement(node: ForStatement) {
+            if (node.incrementor && isPostfixUnaryExpression(node.incrementor)) {
+                return updateFor(
+                    node,
+                    visitNode(node.initializer, visitor, isForInitializer),
+                    visitNode(node.condition, visitor, isExpression),
+                    visitPostfixUnaryExpression(node.incrementor, /*valueIsDiscarded*/ true),
+                    visitNode(node.statement, visitor, isStatement)
+                );
+            }
+            return visitEachChild(node, visitor, context);
+        }
+
+        function visitExpressionStatement(node: ExpressionStatement) {
+            if (isPostfixUnaryExpression(node.expression)) {
+                return updateExpressionStatement(node, visitPostfixUnaryExpression(node.expression, /*valueIsDiscarded*/ true));
             }
             return visitEachChild(node, visitor, context);
         }
