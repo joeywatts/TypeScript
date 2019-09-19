@@ -14,7 +14,7 @@ class A {
 >thing.#foo : any
 >thing : any
 
-        thing.#bar; // OK: we do not (yet) check that #foo is in an ancestor class (but we could)
+        thing.#bar; // Error
 >thing.#bar : any
 >thing : any
     }

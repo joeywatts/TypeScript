@@ -12,7 +12,7 @@ class A {
         thing.#foo; // OK
 >thing : Symbol(thing, Decl(privateNameAndAny.ts, 2, 11))
 
-        thing.#bar; // OK: we do not (yet) check that #foo is in an ancestor class (but we could)
+        thing.#bar; // Error
 >thing : Symbol(thing, Decl(privateNameAndAny.ts, 2, 11))
     }
 };

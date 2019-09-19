@@ -20790,6 +20790,24 @@ namespace ts {
             return getPropertyOfType(leftType, lexicallyScopedIdentifier.escapedName);
         }
 
+        function getPrivateIdentifierWithName(type: Type, name: __String): Symbol | undefined {
+            const properties = getPropertiesOfType(type);
+            if (!properties) {
+                return undefined;
+            }
+            let prop: Symbol | undefined;
+            forEach(properties, (symbol: Symbol) => {
+                const decl = symbol.valueDeclaration;
+                if (decl && isNamedDeclaration(decl) && isPrivateIdentifier(decl.name) && decl.name.escapedText === name) {
+                    prop = symbol;
+                    return true;
+                }
+                return false;
+            });
+            return prop;
+        }
+
+
         function checkPrivateIdentifierPropertyAccess(leftType: Type, right: PrivateIdentifier, lexicallyScopedIdentifier: Symbol | undefined): boolean {
             // Either the identifier could not be looked up in the lexical scope OR the lexically scoped identifier did not exist on the type.
             // Find a private identifier with the same description on the type.
@@ -20861,17 +20879,29 @@ namespace ts {
             if (isPrivateIdentifier(right)) {
                 checkExternalEmitHelpers(node, ExternalEmitHelpers.ClassPrivateFieldGet);
             }
-            if (isTypeAny(apparentType) || apparentType === silentNeverType) {
-                if (isIdentifier(left) && parentSymbol) {
-                    markAliasReferenced(parentSymbol, node);
-                }
-                if (isPrivateIdentifier(right) && !getContainingClass(right)) {
-                    grammarErrorOnNode(right, Diagnostics.Private_identifiers_are_not_allowed_outside_class_bodies);
-                }
-                return apparentType;
-            }
+            const isAnyLike = isTypeAny(apparentType) || apparentType === silentNeverType;
             let prop: Symbol | undefined;
             if (isPrivateIdentifier(right)) {
+                if (isAnyLike) {
+                    let hasContainingClass = false;
+                    const hasMatchingAncestor = !!findAncestor(right, klass => {
+                        if (!isClassLike(klass)) {
+                            return false;
+                        }
+                        hasContainingClass = true;
+                        return !!getPrivateIdentifierWithName(getTypeOfNode(klass), right.escapedText);
+                    });
+                    if (hasMatchingAncestor) {
+                        if (parentSymbol) {
+                            markAliasReferenced(parentSymbol, node);
+                        }
+                        return apparentType;
+                    }
+                    if (!hasContainingClass) {
+                        grammarErrorOnNode(right, Diagnostics.Private_identifiers_are_not_allowed_outside_class_bodies);
+                        return anyType;
+                    }
+                }
                 const lexicallyScopedSymbol = lookupSymbolForPrivateIdentifierDeclaration(right);
                 prop = lexicallyScopedSymbol ? getPrivateIdentifierPropertyOfType(leftType, lexicallyScopedSymbol) : undefined;
                 // Check for private-identifier-specific shadowing and lexical-scoping errors.
@@ -20880,6 +20910,12 @@ namespace ts {
                 }
             }
             else {
+                if (isAnyLike) {
+                    if (isIdentifier(left) && parentSymbol) {
+                        markAliasReferenced(parentSymbol, node);
+                    }
+                    return apparentType;
+                }
                 prop = getPropertyOfType(apparentType, right.escapedText);
             }
             if (isIdentifier(left) && parentSymbol && !(prop && isConstEnumOrConstEnumOnlyModule(prop))) {
