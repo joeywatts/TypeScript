@@ -14027,9 +14027,6 @@ namespace ts {
                         );
                         return;
                     }
-                    if (shouldSkipElaboration) {
-                        overrideNextErrorInfo = errorInfo;
-                    }
                 }
                 const props = arrayFrom(getUnmatchedProperties(source, target, requireOptionalProperties, /*matchDiscriminantProperties*/ false));
                 if (!headMessage || (headMessage.code !== Diagnostics.Class_0_incorrectly_implements_interface_1.code &&
