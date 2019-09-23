@@ -19,7 +19,7 @@ class Parent<T> {
 >Child : typeof Child
 
         Child.#bar;       // Error: not found
->Child.#bar : number
+>Child.#bar : any
 >Child : typeof Child
     }
 }

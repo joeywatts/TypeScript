@@ -1,7 +1,8 @@
 tests/cases/conformance/classes/members/privateNames/privateNamesConstructorChain-2.ts(3,5): error TS18019: 'static' modifier cannot be used with a private identifier
+tests/cases/conformance/classes/members/privateNames/privateNamesConstructorChain-2.ts(6,15): error TS2339: Property '#bar' does not exist on type 'typeof Child'.
 
 
-==== tests/cases/conformance/classes/members/privateNames/privateNamesConstructorChain-2.ts (1 errors) ====
+==== tests/cases/conformance/classes/members/privateNames/privateNamesConstructorChain-2.ts (2 errors) ====
     class Parent<T> {
         #foo = 3;
         static #bar = 5;
@@ -10,6 +11,8 @@ tests/cases/conformance/classes/members/privateNames/privateNamesConstructorChai
         accessChildProps() {
             new Child<string>().#foo; // OK (`#foo` was added when `Parent`'s constructor was called on `child`)
             Child.#bar;       // Error: not found
+                  ~~~~
+!!! error TS2339: Property '#bar' does not exist on type 'typeof Child'.
         }
     }
     

@@ -17,7 +17,6 @@ class Parent<T> {
 >Child : Symbol(Child, Decl(privateNamesConstructorChain-2.ts, 7, 1))
 
         Child.#bar;       // Error: not found
->Child.#bar : Symbol(Parent.#bar, Decl(privateNamesConstructorChain-2.ts, 1, 13))
 >Child : Symbol(Child, Decl(privateNamesConstructorChain-2.ts, 7, 1))
     }
 }

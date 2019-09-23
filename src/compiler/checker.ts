@@ -6810,10 +6810,15 @@ namespace ts {
 
         function addInheritedMembers(symbols: SymbolTable, baseSymbols: Symbol[]) {
             for (const s of baseSymbols) {
-                if (!symbols.has(s.escapedName)) {
+                if (!symbols.has(s.escapedName) && isInheritableProperty(s)) {
                     symbols.set(s.escapedName, s);
                 }
             }
+        }
+
+        function isInheritableProperty(s: Symbol) {
+            const isStaticPrivateIdentifier= s.valueDeclaration && isPrivateIdentifierPropertyDeclaration(s.valueDeclaration) && hasModifier(s.valueDeclaration, ModifierFlags.Static);
+            return !isStaticPrivateIdentifier;
         }
 
         function resolveDeclaredMembers(type: InterfaceType): InterfaceTypeWithDeclaredMembers {
@@ -15566,7 +15571,7 @@ namespace ts {
         }
 
         function* getUnmatchedProperties(source: Type, target: Type, requireOptionalProperties: boolean, matchDiscriminantProperties: boolean): IterableIterator<Symbol> {
-            const properties = target.flags & TypeFlags.Union ? getPossiblePropertiesOfUnionType(target as UnionType) : getPropertiesOfType(target);
+            const properties = (target.flags & TypeFlags.Union ? getPossiblePropertiesOfUnionType(target as UnionType) : getPropertiesOfType(target)).filter(isInheritableProperty);
             for (const targetProp of properties) {
                 if (requireOptionalProperties || !(targetProp.flags & SymbolFlags.Optional || getCheckFlags(targetProp) & CheckFlags.Partial)) {
                     const sourceProp = getPropertyOfType(source, targetProp.escapedName);
@@ -29712,8 +29717,11 @@ namespace ts {
                 if (base.flags & SymbolFlags.Prototype) {
                     continue;
                 }
-
-                const derived = getTargetSymbol(getPropertyOfObjectType(type, base.escapedName)!); // TODO: GH#18217
+                const baseSymbol = getPropertyOfObjectType(type, base.escapedName);
+                if (!baseSymbol) {
+                    continue;
+                }
+                const derived = getTargetSymbol(baseSymbol);
                 const baseDeclarationFlags = getDeclarationModifierFlagsFromSymbol(base);
 
                 Debug.assert(!!derived, "derived should point to something, even if it is the base class' declaration.");
