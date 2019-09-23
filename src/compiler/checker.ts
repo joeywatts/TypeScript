@@ -6811,15 +6811,14 @@ namespace ts {
 
         function addInheritedMembers(symbols: SymbolTable, baseSymbols: Symbol[]) {
             for (const s of baseSymbols) {
-                if (!symbols.has(s.escapedName) && isInheritableProperty(s)) {
+                if (!symbols.has(s.escapedName) && !isStaticPrivateIdentifierProperty(s)) {
                     symbols.set(s.escapedName, s);
                 }
             }
         }
 
-        function isInheritableProperty(s: Symbol) {
-            const isStaticPrivateIdentifier= s.valueDeclaration && isPrivateIdentifierPropertyDeclaration(s.valueDeclaration) && hasModifier(s.valueDeclaration, ModifierFlags.Static);
-            return !isStaticPrivateIdentifier;
+        function isStaticPrivateIdentifierProperty(s: Symbol): boolean {
+            return !!s.valueDeclaration && isPrivateIdentifierPropertyDeclaration(s.valueDeclaration) && hasModifier(s.valueDeclaration, ModifierFlags.Static);
         }
 
         function resolveDeclaredMembers(type: InterfaceType): InterfaceTypeWithDeclaredMembers {
@@ -15572,8 +15571,12 @@ namespace ts {
         }
 
         function* getUnmatchedProperties(source: Type, target: Type, requireOptionalProperties: boolean, matchDiscriminantProperties: boolean): IterableIterator<Symbol> {
-            const properties = (target.flags & TypeFlags.Union ? getPossiblePropertiesOfUnionType(target as UnionType) : getPropertiesOfType(target)).filter(isInheritableProperty);
+            const properties = (target.flags & TypeFlags.Union ? getPossiblePropertiesOfUnionType(target as UnionType) : getPropertiesOfType(target));
             for (const targetProp of properties) {
+                // TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
+                if (isStaticPrivateIdentifierProperty(targetProp)) {
+                    continue;
+                }
                 if (requireOptionalProperties || !(targetProp.flags & SymbolFlags.Optional || getCheckFlags(targetProp) & CheckFlags.Partial)) {
                     const sourceProp = getPropertyOfType(source, targetProp.escapedName);
                     if (!sourceProp) {

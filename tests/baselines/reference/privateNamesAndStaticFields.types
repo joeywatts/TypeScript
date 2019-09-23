@@ -5,12 +5,23 @@ class A {
     static #foo: number;
 >#foo : number
 
+    static #bar: number;
+>#bar : number
+
     constructor () {
         A.#foo = 3;
 >A.#foo = 3 : 3
 >A.#foo : number
 >A : typeof A
 >3 : 3
+
+        B.#foo; // Error
+>B.#foo : any
+>B : typeof B
+
+        B.#bar; // Error
+>B.#bar : any
+>B : typeof B
     }
 }
 
@@ -33,4 +44,11 @@ class B extends A {
 >"some string" : "some string"
     }
 }
+
+// We currently filter out static private identifier fields in `getUnmatchedProperties`.
+// We will need a more robust solution when we support static fields
+const willErrorSomeDay: typeof A = class {}; // OK for now
+>willErrorSomeDay : typeof A
+>A : typeof A
+>class {} : typeof willErrorSomeDay
 
