@@ -14,5 +14,7 @@ class A {
         this.#fieldFunc2(0, ...arr, 3);
         const b = new this.#fieldFunc2(0, ...arr, 3);
         const str = this.#fieldFunc2`head${1}middle${2}tail`;
+        this.getInstance().#fieldFunc2`test${1}and${2}`;
     }
+    getInstance() { return new A(); }
 }

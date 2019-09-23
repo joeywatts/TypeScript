@@ -13,7 +13,9 @@ class A {
         this.#fieldFunc2(0, ...arr, 3);
         const b = new this.#fieldFunc2(0, ...arr, 3);
         const str = this.#fieldFunc2`head${1}middle${2}tail`;
+        this.getInstance().#fieldFunc2`test${1}and${2}`;
     }
+    getInstance() { return new A(); }
 }
 
 
@@ -32,6 +34,7 @@ class A {
         this.x = 1;
     }
     test() {
+        var _a;
         __classPrivateFieldGet(this, _fieldFunc).call(this);
         const func = __classPrivateFieldGet(this, _fieldFunc);
         func();
@@ -39,7 +42,9 @@ class A {
         const arr = [1, 2];
         __classPrivateFieldGet(this, _fieldFunc2).call(this, 0, ...arr, 3);
         const b = new (__classPrivateFieldGet(this, _fieldFunc2))(0, ...arr, 3);
-        const str = __classPrivateFieldGet(this, _fieldFunc2) `head${1}middle${2}tail`;
+        const str = __classPrivateFieldGet(this, _fieldFunc2).bind(this) `head${1}middle${2}tail`;
+        __classPrivateFieldGet((_a = this.getInstance()), _fieldFunc2).bind(_a) `test${1}and${2}`;
     }
+    getInstance() { return new A(); }
 }
 _fieldFunc = new WeakMap(), _fieldFunc2 = new WeakMap();

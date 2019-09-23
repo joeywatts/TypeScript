@@ -105,6 +105,8 @@ namespace ts {
                     return visitExpressionStatement(node as ExpressionStatement);
                 case SyntaxKind.ForStatement:
                     return visitForStatement(node as ForStatement);
+                case SyntaxKind.TaggedTemplateExpression:
+                    return visitTaggedTemplateExpression(node as TaggedTemplateExpression);
             }
             return visitEachChild(node, visitor, context);
         }
@@ -340,6 +342,23 @@ namespace ts {
                     createPropertyAccess(visitNode(target, visitor), "call"),
                     /*typeArguments*/ undefined,
                     [visitNode(thisArg, visitor, isExpression), ...visitNodes(node.arguments, visitor, isExpression)]
+                );
+            }
+            return visitEachChild(node, visitor, context);
+        }
+
+        function visitTaggedTemplateExpression(node: TaggedTemplateExpression) {
+            if (shouldTransformPrivateFields && isPrivateIdentifierPropertyAccessExpression(node.tag)) {
+                // Bind the `this` correctly for tagged template literals when the tag is a private identifier property access.
+                const { thisArg, target } = createCallBinding(node.tag, hoistVariableDeclaration, languageVersion);
+                return updateTaggedTemplate(
+                    node,
+                    createCall(
+                        createPropertyAccess(visitNode(target, visitor), "bind"),
+                        /*typeArguments*/ undefined,
+                        [visitNode(thisArg, visitor, isExpression)]
+                    ),
+                    visitNode(node.template, visitor, isTemplateLiteral)
                 );
             }
             return visitEachChild(node, visitor, context);
