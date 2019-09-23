@@ -1,0 +1,23 @@
+tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts(2,12): error TS18010: An accessibility modifier cannot be used with a private identifier.
+tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts(3,13): error TS18010: An accessibility modifier cannot be used with a private identifier.
+tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts(4,15): error TS18010: An accessibility modifier cannot be used with a private identifier.
+tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts(5,5): error TS1244: Abstract methods can only appear within an abstract class.
+
+
+==== tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts (4 errors) ====
+    class A {
+        public #foo = 3;         // Error
+               ~~~~
+!!! error TS18010: An accessibility modifier cannot be used with a private identifier.
+        private #bar = 3;        // Error
+                ~~~~
+!!! error TS18010: An accessibility modifier cannot be used with a private identifier.
+        protected #baz = 3;      // Error
+                  ~~~~
+!!! error TS18010: An accessibility modifier cannot be used with a private identifier.
+        abstract #quux = 3;      // Error
+        ~~~~~~~~
+!!! error TS1244: Abstract methods can only appear within an abstract class.
+        readonly #qux = 3;       // OK
+    }
+    

@@ -5,5 +5,6 @@ class A {
     public #foo = 3;         // Error
     private #bar = 3;        // Error
     protected #baz = 3;      // Error
+    abstract #quux = 3;      // Error
     readonly #qux = 3;       // OK
 }

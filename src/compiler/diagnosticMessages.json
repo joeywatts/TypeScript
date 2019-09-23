@@ -5145,7 +5145,7 @@
         "category": "Error",
         "code": 18009
     },
-    "Accessibility modifiers cannot be used with private identifiers.": {
+    "An accessibility modifier cannot be used with a private identifier.": {
         "category": "Error",
         "code": 18010
     },
@@ -5181,7 +5181,7 @@
         "category": "Error",
         "code": 18018
     },
-    "'{0}' modifier cannot be used with a private-named property.": {
+    "'{0}' modifier cannot be used with a private identifier": {
         "category": "Error",
         "code": 18019
     },
