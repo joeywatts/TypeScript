@@ -1,7 +1,10 @@
 === tests/cases/conformance/classes/members/privateNames/privateNameBadSuper.ts ===
+class B {};
+>B : B
+
 class A extends B {
 >A : A
->B : any
+>B : B
 
     #x;
 >#x : any
@@ -13,6 +16,6 @@ class A extends B {
 
         super();
 >super() : void
->super : any
+>super : typeof B
     }
 }

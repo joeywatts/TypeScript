@@ -1,4 +1,5 @@
 //// [privateNameBadSuper.ts]
+class B {};
 class A extends B {
     #x;
     constructor() {
@@ -9,6 +10,9 @@ class A extends B {
 
 //// [privateNameBadSuper.js]
 var _x;
+class B {
+}
+;
 class A extends B {
     constructor() {
         _x.set(this, void 0);
