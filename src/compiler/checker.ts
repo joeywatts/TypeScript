@@ -32810,7 +32810,7 @@ namespace ts {
                             }
                         }
                         if (isNamedDeclaration(node) && node.name.kind === SyntaxKind.PrivateIdentifier) {
-                            return grammarErrorOnNode(node, Diagnostics._0_modifier_cannot_be_used_with_a_private_identifier);
+                            return grammarErrorOnNode(node, Diagnostics._0_modifier_cannot_be_used_with_a_private_identifier, "abstract");
                         }
 
                         flags |= ModifierFlags.Abstract;

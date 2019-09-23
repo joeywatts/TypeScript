@@ -1,4 +1,4 @@
-=== tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibileModifiers.ts ===
+=== tests/cases/conformance/classes/members/privateNames/privateNamesIncompatibleModifiers.ts ===
 class A {
 >A : A
 
@@ -14,12 +14,16 @@ class A {
 >#baz : number
 >3 : 3
 
-    abstract #quux = 3;      // Error
->#quux : number
->3 : 3
-
     readonly #qux = 3;       // OK
 >#qux : 3
+>3 : 3
+}
+
+abstract class B {
+>B : B
+
+    abstract #quux = 3;      // Error
+>#quux : number
 >3 : 3
 }
 
