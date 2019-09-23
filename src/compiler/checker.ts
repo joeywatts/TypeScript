@@ -20849,7 +20849,7 @@ namespace ts {
                 }
                 error(
                     right,
-                    Diagnostics.Property_0_is_not_accessible_outside_class_1_because_it_is_privately_named,
+                    Diagnostics.Property_0_is_not_accessible_outside_class_1_because_it_has_a_private_identifier,
                     diagName,
                     diagnosticName(typeClass!.name || anon)
                 );

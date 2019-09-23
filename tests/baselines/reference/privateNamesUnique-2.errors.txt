@@ -1,4 +1,4 @@
-tests/cases/conformance/classes/members/privateNames/a.ts(4,15): error TS18013: Property '#x' is not accessible outside class 'Foo' because it is privately named.
+tests/cases/conformance/classes/members/privateNames/a.ts(4,15): error TS18013: Property '#x' is not accessible outside class 'Foo' because it has a private identifier.
 
 
 ==== tests/cases/conformance/classes/members/privateNames/a.ts (1 errors) ====
@@ -7,7 +7,7 @@ tests/cases/conformance/classes/members/privateNames/a.ts(4,15): error TS18013: 
         copy(other: import("./b").Foo) {
             other.#x; // error
                   ~~
-!!! error TS18013: Property '#x' is not accessible outside class 'Foo' because it is privately named.
+!!! error TS18013: Property '#x' is not accessible outside class 'Foo' because it has a private identifier.
         }
     }
         
