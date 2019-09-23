@@ -366,12 +366,13 @@ namespace ts {
             getDeclaredTypeOfSymbol,
             getPropertiesOfType,
             getPropertyOfType: (type, name) => getPropertyOfType(type, escapeLeadingUnderscores(name)),
-            getPrivateIdentifierPropertyOfType: (leftType: Type, right: PrivateIdentifier) => {
-                const parseTreeRight = getParseTreeNode(right, isPrivateIdentifier);
-                if (!parseTreeRight) {
+            getPrivateIdentifierPropertyOfType: (leftType: Type, name: string, location: Node) => {
+                const node = getParseTreeNode(location);
+                if (!node) {
                     return undefined;
                 }
-                const lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(parseTreeRight);
+                const propName = escapeLeadingUnderscores(name);
+                const lexicallyScopedIdentifier = lookupSymbolForPrivateIdentifierDeclaration(propName, node);
                 return lexicallyScopedIdentifier ? getPrivateIdentifierPropertyOfType(leftType, lexicallyScopedIdentifier) : undefined;
             },
             getTypeOfPropertyOfType: (type, name) => getTypeOfPropertyOfType(type, escapeLeadingUnderscores(name)),
@@ -20780,10 +20781,10 @@ namespace ts {
         }
 
         // Lookup the private identifier lexically.
-        function lookupSymbolForPrivateIdentifierDeclaration(right: PrivateIdentifier): Symbol | undefined {
-            for (let containingClass = getContainingClass(right); !!containingClass; containingClass = getContainingClass(containingClass)) {
+        function lookupSymbolForPrivateIdentifierDeclaration(propName: __String, location: Node): Symbol | undefined {
+            for (let containingClass = getContainingClass(location); !!containingClass; containingClass = getContainingClass(containingClass)) {
                 const { symbol } = containingClass;
-                const name = getSymbolNameForPrivateIdentifier(symbol, right.escapedText);
+                const name = getSymbolNameForPrivateIdentifier(symbol, propName);
                 const prop = (symbol.members && symbol.members.get(name)) || (symbol.exports && symbol.exports.get(name));
                 if (prop) {
                     return prop;
@@ -20869,7 +20870,7 @@ namespace ts {
             const isAnyLike = isTypeAny(apparentType) || apparentType === silentNeverType;
             let prop: Symbol | undefined;
             if (isPrivateIdentifier(right)) {
-                const lexicallyScopedSymbol = lookupSymbolForPrivateIdentifierDeclaration(right);
+                const lexicallyScopedSymbol = lookupSymbolForPrivateIdentifierDeclaration(right.escapedText, right);
                 if (isAnyLike) {
                     if (lexicallyScopedSymbol) {
                         return apparentType;
