@@ -26,16 +26,15 @@ var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (
     return value;
 };
 var _x;
-var C = /** @class */ (function () {
-    function C() {
+class C {
+    constructor() {
         _x.set(this, void 0);
     }
-    C.test = function () {
+    static test() {
         __classPrivateFieldSet(new C(), _x, 10);
-        var y = new C();
-        var z = new y();
+        const y = new C();
+        const z = new y();
         z.x = 123;
-    };
-    return C;
-}());
+    }
+}
 _x = new WeakMap();

@@ -1,3 +1,5 @@
+// @target: es2015
+
 class A {
     #foo = 1;
     static #foo = true; // error (duplicate)

@@ -1,3 +1,5 @@
+// @target: es2015
+
 class A {
     #field = 0;
     constructor() {

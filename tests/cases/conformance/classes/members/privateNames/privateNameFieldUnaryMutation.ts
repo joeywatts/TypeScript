@@ -1,3 +1,5 @@
+// @target: es2015
+
 class C {
     #test: number = 24;
     constructor() {

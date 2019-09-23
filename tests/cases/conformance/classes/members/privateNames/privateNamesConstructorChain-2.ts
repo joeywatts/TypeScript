@@ -1,3 +1,5 @@
+// @target: es2015
+
 class Parent<T> {
     #foo = 3;
     static #bar = 5;

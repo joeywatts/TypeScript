@@ -1,3 +1,5 @@
+// @target: es2015
+
 class B {
     #foo = class {
         constructor() {

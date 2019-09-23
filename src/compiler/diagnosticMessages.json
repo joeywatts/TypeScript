@@ -5204,5 +5204,9 @@
     "Compiler reserves name '{0}' when emitting private identifier downlevel.": {
         "category": "Error",
         "code": 18027
+    },
+    "Private identifiers are only available when targeting ECMAScript 2015 and higher.": {
+        "category": "Error",
+        "code": 18028
     }
 }

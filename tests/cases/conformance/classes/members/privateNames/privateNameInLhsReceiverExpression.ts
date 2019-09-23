@@ -1,3 +1,4 @@
+// @target: es2015
 
 class Test {
     #y = 123;

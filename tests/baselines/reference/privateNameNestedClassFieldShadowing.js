@@ -23,24 +23,22 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _x;
-var Base = /** @class */ (function () {
-    function Base() {
+class Base {
+    constructor() {
         var _x_1;
         _x.set(this, void 0);
-        var Derived = /** @class */ (function () {
-            function Derived() {
+        class Derived {
+            constructor() {
                 _x_1.set(this, void 0);
             }
-            Derived.prototype.testBase = function (x) {
+            testBase(x) {
                 console.log(__classPrivateFieldGet(x, _x_1));
-            };
-            Derived.prototype.testDerived = function (x) {
+            }
+            testDerived(x) {
                 console.log(__classPrivateFieldGet(x, _x_1));
-            };
-            return Derived;
-        }());
+            }
+        }
         _x_1 = new WeakMap();
     }
-    return Base;
-}());
+}
 _x = new WeakMap();

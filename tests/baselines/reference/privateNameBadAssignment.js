@@ -27,18 +27,14 @@ var _bar;
 exports. = 1; // Error (outside class body)
 function A() { }
 A.prototype. = 2; // Error (outside class body)
-var B = /** @class */ (function () {
-    function B() {
-    }
-    return B;
-}());
+class B {
+}
 B. = 3; // Error (outside class body)
-var C = /** @class */ (function () {
-    function C() {
+class C {
+    constructor() {
         _bar.set(this, 6);
         __classPrivateFieldSet(exports, _bar, 6); // Error
         this. = 3; // Error (undeclared)
     }
-    return C;
-}());
+}
 _bar = new WeakMap();

@@ -1,3 +1,5 @@
+// @target: es2015
+
 class Base {
     #x;
     constructor() {

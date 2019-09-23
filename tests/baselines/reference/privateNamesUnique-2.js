@@ -23,19 +23,14 @@ a.copy(b); // error
 
 
 //// [b.js]
-"use strict";
 var _x;
-exports.__esModule = true;
-var Foo = /** @class */ (function () {
-    function Foo() {
+export class Foo {
+    constructor() {
         _x.set(this, void 0);
     }
-    return Foo;
-}());
-exports.Foo = Foo;
+}
 _x = new WeakMap();
 //// [a.js]
-"use strict";
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
     if (!privateMap.has(receiver)) {
         throw new TypeError("attempted to get private field on non-instance");
@@ -43,23 +38,18 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _x;
-exports.__esModule = true;
-var Foo = /** @class */ (function () {
-    function Foo() {
+export class Foo {
+    constructor() {
         _x.set(this, void 0);
     }
-    Foo.prototype.copy = function (other) {
+    copy(other) {
         __classPrivateFieldGet(other, _x); // error
-    };
-    return Foo;
-}());
-exports.Foo = Foo;
+    }
+}
 _x = new WeakMap();
 //// [main.js]
-"use strict";
-exports.__esModule = true;
-var a_1 = require("./a");
-var b_1 = require("./b");
-var a = new a_1.Foo();
-var b = new b_1.Foo();
+import { Foo as A } from "./a";
+import { Foo as B } from "./b";
+const a = new A();
+const b = new B();
 a.copy(b); // error

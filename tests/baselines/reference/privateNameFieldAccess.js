@@ -15,11 +15,10 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _myField;
-var A = /** @class */ (function () {
-    function A() {
+class A {
+    constructor() {
         _myField.set(this, "hello world");
         console.log(__classPrivateFieldGet(this, _myField));
     }
-    return A;
-}());
+}
 _myField = new WeakMap();

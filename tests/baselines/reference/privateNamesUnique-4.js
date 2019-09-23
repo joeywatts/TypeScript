@@ -21,26 +21,21 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     }
     return privateMap.get(receiver);
 };
-var A = /** @class */ (function () {
-    function A() {
+var _foo, _foo_1, _foo_2;
+class A {
+    constructor() {
         _foo_1.set(this, 1);
         // because static and instance private names
         // share the same lexical scope
         // https://tc39.es/proposal-class-fields/#prod-ClassBody
     }
-    var _foo, _foo_1;
-    _foo = new WeakMap(), _foo_1 = new WeakMap();
-    _foo_1.set(A, true); // error (duplicate)
-    return A;
-}());
-var B = /** @class */ (function () {
-    function B() {
-    }
-    B.prototype.test = function (x) {
+}
+_foo = new WeakMap(), _foo_1 = new WeakMap();
+_foo_1.set(A, true); // error (duplicate)
+class B {
+    test(x) {
         __classPrivateFieldGet(x, _foo_2); // error (#foo is a static property on B, not an instance property)
-    };
-    var _foo_2;
-    _foo_2 = new WeakMap();
-    _foo_2.set(B, true);
-    return B;
-}());
+    }
+}
+_foo_2 = new WeakMap();
+_foo_2.set(B, true);

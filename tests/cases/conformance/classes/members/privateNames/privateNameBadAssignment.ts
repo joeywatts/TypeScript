@@ -1,3 +1,5 @@
+// @target: es2015
+
 exports.#nope = 1;           // Error (outside class body)
 function A() { }
 A.prototype.#no = 2;         // Error (outside class body)

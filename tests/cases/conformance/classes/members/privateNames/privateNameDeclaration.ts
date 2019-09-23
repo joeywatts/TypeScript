@@ -1,4 +1,5 @@
 // @declaration: true
+// @target: es2015
 
 class A {
     #foo: string;

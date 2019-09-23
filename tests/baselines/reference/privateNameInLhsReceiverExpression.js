@@ -24,31 +24,28 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _y;
-var Test = /** @class */ (function () {
-    function Test() {
+class Test {
+    constructor() {
         _y.set(this, 123);
     }
-    Test.something = function (obj) {
+    static something(obj) {
         var _x, _a, _x_1, _b, _c;
-        __classPrivateFieldSet(obj[(new (_a = /** @class */ (function () {
-                function class_1() {
+        __classPrivateFieldSet(obj[(new (_a = class {
+                constructor() {
                     _x.set(this, 1);
                     this.s = "prop";
                 }
-                return class_1;
-            }()),
+            },
             _x = new WeakMap(),
             _a)).s], _y, 1);
-        __classPrivateFieldSet(_c = obj[(new (_b = /** @class */ (function () {
-                function class_2() {
+        __classPrivateFieldSet(_c = obj[(new (_b = class {
+                constructor() {
                     _x_1.set(this, 1);
                     this.s = "prop";
                 }
-                return class_2;
-            }()),
+            },
             _x_1 = new WeakMap(),
             _b)).s], _y, __classPrivateFieldGet(_c, _y) + 1);
-    };
-    return Test;
-}());
+    }
+}
 _y = new WeakMap();

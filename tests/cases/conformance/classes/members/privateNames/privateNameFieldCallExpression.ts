@@ -1,4 +1,4 @@
-// @target: es5
+// @target: es2015
 
 class A {
     #fieldFunc = function() { this.x = 10; };

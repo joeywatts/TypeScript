@@ -50,8 +50,8 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _field;
-var A = /** @class */ (function () {
-    function A() {
+class A {
+    constructor() {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         _field.set(this, 0);
         __classPrivateFieldSet(this, _field, 1);
@@ -81,9 +81,8 @@ var A = /** @class */ (function () {
         __classPrivateFieldSet(_l = A.getInstance(), _field, __classPrivateFieldGet(_l, _field) | 12);
         __classPrivateFieldSet(_m = A.getInstance(), _field, __classPrivateFieldGet(_m, _field) ^ 13);
     }
-    A.getInstance = function () {
+    static getInstance() {
         return new A();
-    };
-    return A;
-}());
+    }
+}
 _field = new WeakMap();

@@ -1,3 +1,5 @@
+// @target: es2015
+
 class A {
     #foo = this.#bar; // Error
     #bar = 3;

@@ -2,6 +2,7 @@
 // @checkJs: true
 // @noEmit: true
 // @Filename: privateNameJsBadAssignment.js
+// @target: es2015
 
 exports.#nope = 1;           // Error (outside class body)
 function A() { }
