@@ -1,4 +1,4 @@
-//// [privateNamesUnique-4.ts]
+//// [privateNamesUnique-3.ts]
 class A {
     #foo = 1;
     static #foo = true; // error (duplicate)
@@ -14,7 +14,7 @@ class B {
 }
 
 
-//// [privateNamesUnique-4.js]
+//// [privateNamesUnique-3.js]
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
     if (!privateMap.has(receiver)) {
         throw new TypeError("attempted to get private field on non-instance");
